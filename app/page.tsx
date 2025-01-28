@@ -20,19 +20,22 @@ export default function Home() {
 		};
 		setToDoList([...toDoList, item]);
 		setToDoListTitle('');
-		
 	}
 
-function deleteToDoItem(item:ToDoItem){
-const deletedItem = toDoList.filter(el => el.id !== item.id);
-setToDoList(deletedItem);
-};
+	function deleteToDoItem(item: ToDoItem) {
+		const deletedItem = toDoList.filter(el => el.id !== item.id);
+		setToDoList(deletedItem);
+	}
 
-
-
-
-
-
+	function completeToDoItem(item: ToDoItem) {
+		const completedItem = toDoList.map(el => {
+			if (el.id === item.id) {
+				el.completed = el.completed ? false : true;
+			}
+			return el;
+		});
+		setToDoList(completedItem);
+	}
 
 	return (
 		<div className='container mx-auto p-4 flex flex-col items-center gap-4'>
@@ -44,7 +47,7 @@ setToDoList(deletedItem);
 					e.preventDefault();
 				}}
 				action=''
-				className=' p-4 flex  items-center gap-4'
+				className=' p-4 flex flex-col  items-center gap-4'
 			>
 				<input
 					type='text'
@@ -52,29 +55,33 @@ setToDoList(deletedItem);
 					onChange={el => setToDoListTitle(el.target.value)}
 					className='input'
 				/>
-				<button className='btn btn-outline '>
-					Добавить
-				</button>
+				<button className='btn btn-outline '>Добавить</button>
 			</form>
-
-
-
 
 			{toDoList.map(el => {
 				return (
-					<label
-						key={el.id}
-						htmlFor={`todo-${el.id}`}
-						className='text-3xl p-4 flex  items-center gap-4'
-					>
-						<input
-							type='checkbox'
-							id={el.id}
-							defaultChecked
-							className='checkbox'
-						/>
-						<span className='line-through'>{el.title}</span>
-						<button onClick={()=>deleteToDoItem(el)}className='btn btn-square btn-outline'>
+					<div key={el.id} className=' p-4 flex flex-wrap  items-center gap-4'>
+						<label
+							key={el.id}
+							htmlFor={`todo-${el.id}`}
+							className='text-3xl p-4 flex  items-center gap-4'
+							onClick={() => completeToDoItem(el)}
+						>
+							<input
+								type='checkbox'
+								id={el.id}
+								checked={el.completed}
+								className='checkbox'
+								onChange={() => {}}
+							/>
+							<span className={el.completed ? 'line-through' : ''}>
+								{el.title}
+							</span>
+						</label>
+						<button
+							onClick={() => deleteToDoItem(el)}
+							className='btn btn-square btn-outline'
+						>
 							<svg
 								xmlns='http://www.w3.org/2000/svg'
 								className='h-6 w-6'
@@ -90,10 +97,9 @@ setToDoList(deletedItem);
 								/>
 							</svg>
 						</button>
-					</label>
+					</div>
 				);
 			})}
-		
 		</div>
 	);
 }
