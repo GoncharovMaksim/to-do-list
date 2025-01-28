@@ -30,7 +30,7 @@ export default function Home() {
 	function completeToDoItem(item: ToDoItem) {
 		const completedItem = toDoList.map(el => {
 			if (el.id === item.id) {
-				el.completed = el.completed ? false : true;
+				return { ...el, completed: !el.completed };
 			}
 			return el;
 		});
@@ -62,22 +62,21 @@ export default function Home() {
 				return (
 					<div key={el.id} className=' p-4 flex flex-wrap  items-center gap-4'>
 						<label
-							key={el.id}
 							htmlFor={`todo-${el.id}`}
-							className='text-3xl p-4 flex  items-center gap-4'
-							onClick={() => completeToDoItem(el)}
+							className='text-3xl p-4 flex items-center gap-4'
 						>
 							<input
 								type='checkbox'
-								id={el.id}
+								id={`todo-${el.id}`}
 								checked={el.completed}
 								className='checkbox'
-								onChange={() => {}}
+								onChange={() => completeToDoItem(el)} 
 							/>
-							<span className={el.completed ? 'line-through' : ''}>
+							<span className={el.completed ? 'line-through ' : ''}>
 								{el.title}
 							</span>
 						</label>
+
 						<button
 							onClick={() => deleteToDoItem(el)}
 							className='btn btn-square btn-outline'
