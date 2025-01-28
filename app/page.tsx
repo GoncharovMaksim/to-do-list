@@ -11,7 +11,7 @@ export default function Home() {
 	const [toDoList, setToDoList] = useState<ToDoItem[]>([]);
 
 	const [toDoListTitle, setToDoListTitle] = useState('');
-	// console.log(nanoid(), uuidv4());
+
 	function addToDoItem() {
 		const item: ToDoItem = {
 			id: nanoid(),
