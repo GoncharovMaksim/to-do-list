@@ -1,27 +1,38 @@
 'use client';
 import { useState } from 'react';
 import { nanoid } from 'nanoid';
-interface ToDoList {
+interface ToDoItem {
 	id: string;
 	title: string;
 	completed: boolean;
 }
 
 export default function Home() {
-	const [toDoList, setToDoList] = useState<ToDoList[]>([]);
+	const [toDoList, setToDoList] = useState<ToDoItem[]>([]);
 
 	const [toDoListTitle, setToDoListTitle] = useState('');
 	// console.log(nanoid(), uuidv4());
 	function addToDoItem() {
-		const item: ToDoList = {
+		const item: ToDoItem = {
 			id: nanoid(),
 			title: toDoListTitle,
 			completed: false,
 		};
 		setToDoList([...toDoList, item]);
 		setToDoListTitle('');
-		console.log(toDoList);
+		
 	}
+
+function deleteToDoItem(item:ToDoItem){
+const deletedItem = toDoList.filter(el => el.id !== item.id);
+setToDoList(deletedItem);
+};
+
+
+
+
+
+
 
 	return (
 		<div className='container mx-auto p-4 flex flex-col items-center gap-4'>
@@ -46,6 +57,9 @@ export default function Home() {
 				</button>
 			</form>
 
+
+
+
 			{toDoList.map(el => {
 				return (
 					<label
@@ -60,7 +74,7 @@ export default function Home() {
 							className='checkbox'
 						/>
 						<span className='line-through'>{el.title}</span>
-						<button className='btn btn-square btn-outline'>
+						<button onClick={()=>deleteToDoItem(el)}className='btn btn-square btn-outline'>
 							<svg
 								xmlns='http://www.w3.org/2000/svg'
 								className='h-6 w-6'
