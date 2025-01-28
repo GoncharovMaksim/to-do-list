@@ -40,7 +40,7 @@ export default function Home() {
 	}
 
 	return (
-		<div className='container mx-auto p-4 l items-center gap-4'>
+		<div className='container mx-auto p-4 items-center gap-4'>
 			<h1 className='text-4xl text-center'>Список дел</h1>
 
 			<form
@@ -49,13 +49,13 @@ export default function Home() {
 					addToDoItem();
 				}}
 				action=''
-				className=' p-4 flex flex-col  items-center gap-4 min-w-full'
+				className=' p-8 flex flex-col  items-center gap-4 min-w-full '
 			>
 				<input
 					type='text'
 					value={toDoListTitle}
 					onChange={el => setToDoListTitle(el.target.value)}
-					className='input min-w-full text-3xl'
+					className='input min-w-full text-3xl flex-auto p-8'
 				/>
 				<button className='btn btn-outline min-w-60'>Добавить</button>
 			</form>
