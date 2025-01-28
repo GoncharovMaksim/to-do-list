@@ -18,6 +18,8 @@ export default function Home() {
 			title: toDoListTitle,
 			completed: false,
 		};
+		if (!item.title) return;
+
 		setToDoList([...toDoList, item]);
 		setToDoListTitle('');
 	}
@@ -43,8 +45,8 @@ export default function Home() {
 
 			<form
 				onSubmit={e => {
-					addToDoItem();
 					e.preventDefault();
+					addToDoItem();
 				}}
 				action=''
 				className=' p-4 flex flex-col  items-center gap-4'
@@ -70,7 +72,7 @@ export default function Home() {
 								id={`todo-${el.id}`}
 								checked={el.completed}
 								className='checkbox'
-								onChange={() => completeToDoItem(el)} 
+								onChange={() => completeToDoItem(el)}
 							/>
 							<span className={el.completed ? 'line-through ' : ''}>
 								{el.title}
