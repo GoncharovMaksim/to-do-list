@@ -24,6 +24,13 @@ export default function RootLayout({
 }>) {
   return (
 		<html lang='ru' className={`bg-gray-100`}>
+			<head>
+				{/* Подключение иконок Google Material Icons */}
+				<link
+					href='https://fonts.googleapis.com/icon?family=Material+Icons'
+					rel='stylesheet'
+				/>
+			</head>
 			<body
 				className={`bg-gray-100 ${geistSans.variable} ${geistMono.variable} antialiased`}
 			>

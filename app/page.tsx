@@ -63,10 +63,10 @@ export default function Home() {
 
 			{toDoList.map(el => {
 				return (
-					<div key={el.id} className=' p-4 flex flex-wrap  items-center gap-4'>
+					<div key={el.id} className='p-4 flex items-center gap-4 w-full'>
 						<label
 							htmlFor={`todo-${el.id}`}
-							className='text-3xl p-4 flex items-center gap-4'
+							className='text-3xl flex items-center gap-4 flex-grow'
 						>
 							<input
 								type='checkbox'
@@ -75,29 +75,18 @@ export default function Home() {
 								className='checkbox'
 								onChange={() => completeToDoItem(el)}
 							/>
-							<span className={el.completed ? 'line-through ' : ''}>
+							<span className={el.completed ? 'line-through' : ''}>
 								{el.title}
 							</span>
 						</label>
 
 						<button
 							onClick={() => deleteToDoItem(el)}
-							className='btn btn-square btn-outline'
+							className='flex items-center justify-center p-2 sm:p-1 md:p-1 text-base sm:text-sm md:text-xs ml-4'
 						>
-							<svg
-								xmlns='http://www.w3.org/2000/svg'
-								className='h-6 w-6'
-								fill='none'
-								viewBox='0 0 24 24'
-								stroke='currentColor'
-							>
-								<path
-									strokeLinecap='round'
-									strokeLinejoin='round'
-									strokeWidth='2'
-									d='M6 18L18 6M6 6l12 12'
-								/>
-							</svg>
+							<span className='material-icons sm:text-lg md:text-sm'>
+								delete
+							</span>
 						</button>
 					</div>
 				);
