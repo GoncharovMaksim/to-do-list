@@ -49,13 +49,14 @@ export default function Home() {
 					addToDoItem();
 				}}
 				action=''
-				className=' p-8 flex flex-col  items-center gap-4 min-w-full '
+				className=' p-8 flex flex-col  items-center gap-4 w-full '
 			>
 				<input
 					type='text'
 					value={toDoListTitle}
 					onChange={el => setToDoListTitle(el.target.value)}
-					className='input min-w-full text-3xl flex-auto p-8'
+					
+					className='input w-full text-3xl flex-auto px-8'
 				/>
 				<button className='btn btn-outline min-w-60'>Добавить</button>
 			</form>
