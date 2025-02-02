@@ -8,9 +8,7 @@ interface ToDoItem {
 }
 
 export default function Home() {
-	const [toDoList, setToDoList] = useState<ToDoItem[]>(
-		[]
-	);
+	const [toDoList, setToDoList] = useState<ToDoItem[]>([]);
 
 	const [toDoListTitle, setToDoListTitle] = useState('');
 
@@ -30,9 +28,10 @@ export default function Home() {
 	}
 
 	useEffect(() => {
-		if(toDoList.length===0){
-			setToDoList(JSON.parse(localStorage.getItem('toDoList') || ''));
-		}
+		setToDoList(JSON.parse(localStorage.getItem('toDoList') || '[]'));
+	}, []);
+
+	useEffect(() => {
 		localStorage?.setItem('toDoList', JSON.stringify(toDoList));
 	}, [toDoList]);
 
