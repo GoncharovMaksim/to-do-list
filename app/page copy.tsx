@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { nanoid } from 'nanoid';
 interface ToDoItem {
 	id: string;
@@ -8,13 +8,9 @@ interface ToDoItem {
 }
 
 export default function Home() {
-	const [toDoList, setToDoList] = useState<ToDoItem[]>(
-		JSON.parse(localStorage.getItem('toDoList') || '')
-	);
+	const [toDoList, setToDoList] = useState<ToDoItem[]>([]);
 
 	const [toDoListTitle, setToDoListTitle] = useState('');
-
-	const inputRef = useRef<HTMLInputElement>(null);
 
 	function addToDoItem() {
 		const item: ToDoItem = {
@@ -26,12 +22,7 @@ export default function Home() {
 
 		setToDoList([...toDoList, item]);
 		setToDoListTitle('');
-		inputRef.current?.focus();
 	}
-
-	useEffect(() => {
-		localStorage.setItem('toDoList', JSON.stringify(toDoList));
-	}, [toDoList]);
 
 	function deleteToDoItem(item: ToDoItem) {
 		const deletedItem = toDoList.filter(el => el.id !== item.id);
@@ -61,23 +52,18 @@ export default function Home() {
 				className=' p-8 flex flex-col  items-center gap-4 w-full '
 			>
 				<input
-					ref={inputRef}
 					type='text'
 					value={toDoListTitle}
 					onChange={el => setToDoListTitle(el.target.value)}
+					
 					className='input w-full text-3xl flex-auto px-8'
 				/>
 				<button className='btn btn-outline min-w-60'>Добавить</button>
 			</form>
 
-			{toDoList.map((el, index) => {
+			{toDoList.map(el => {
 				return (
-					<div
-						key={el.id}
-						className={`p-4 flex items-center gap-4 w-full rounded-lg ${
-							index % 2 ? 'bg-gray-300' : ''
-						}`}
-					>
+					<div key={el.id} className='p-4 flex items-center gap-4 w-full'>
 						<label
 							htmlFor={`todo-${el.id}`}
 							className='text-3xl flex items-center gap-4 flex-grow'
