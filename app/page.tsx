@@ -9,7 +9,7 @@ interface ToDoItem {
 
 export default function Home() {
 	const [toDoList, setToDoList] = useState<ToDoItem[]>(
-		JSON.parse(localStorage.getItem('toDoList') || '')
+		[]
 	);
 
 	const [toDoListTitle, setToDoListTitle] = useState('');
@@ -30,7 +30,10 @@ export default function Home() {
 	}
 
 	useEffect(() => {
-		localStorage.setItem('toDoList', JSON.stringify(toDoList));
+		if(toDoList.length===0){
+			setToDoList(JSON.parse(localStorage.getItem('toDoList') || ''));
+		}
+		localStorage?.setItem('toDoList', JSON.stringify(toDoList));
 	}, [toDoList]);
 
 	function deleteToDoItem(item: ToDoItem) {
