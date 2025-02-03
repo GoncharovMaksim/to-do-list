@@ -55,9 +55,7 @@ export default function Home() {
 	}, []);
 
 	useEffect(() => {
-		if (toDoList.length > 0) {
-			localStorage.setItem('toDoList', JSON.stringify(toDoList));
-		}
+		localStorage.setItem('toDoList', JSON.stringify(toDoList));
 	}, [toDoList]);
 
 	const filteredToDoList = useMemo(() => {
