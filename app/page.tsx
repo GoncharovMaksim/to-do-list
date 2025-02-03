@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { nanoid } from 'nanoid';
 interface ToDoItem {
 	id: string;
@@ -9,7 +9,7 @@ interface ToDoItem {
 
 export default function Home() {
 	const [toDoList, setToDoList] = useState<ToDoItem[]>([]);
-	const [filteredToDoList, setFilteredToDoList] = useState<ToDoItem[]>([]);
+	//const [filteredToDoList, setFilteredToDoList] = useState<ToDoItem[]>([]);
 	const [toDoListTitle, setToDoListTitle] = useState('');
 
 	const inputRef = useRef<HTMLInputElement>(null);
@@ -17,12 +17,12 @@ export default function Home() {
 	const [filterOn, setFilterOn] = useState<boolean>(false);
 
 	function addToDoItem() {
+		if (!toDoListTitle.trim()) return;
 		const item: ToDoItem = {
 			id: nanoid(),
 			title: toDoListTitle,
 			completed: false,
 		};
-		if (!item.title) return;
 
 		setToDoList([...toDoList, item]);
 		setToDoListTitle('');
@@ -45,17 +45,26 @@ export default function Home() {
 	}
 
 	useEffect(() => {
-		setToDoList(JSON.parse(localStorage.getItem('toDoList') || '[]'));
+		try {
+			const storedList = localStorage.getItem('toDoList');
+			setToDoList(storedList ? JSON.parse(storedList) : []);
+		} catch (error) {
+			console.error('Ошибка загрузки списка дел:', error);
+			setToDoList([]);
+		}
 	}, []);
 
 	useEffect(() => {
-		localStorage.setItem('toDoList', JSON.stringify(toDoList));
+		if (toDoList.length > 0) {
+			localStorage.setItem('toDoList', JSON.stringify(toDoList));
+		}
 	}, [toDoList]);
 
-	useEffect(() => {
-		setFilteredToDoList(toDoList.filter(el => el.completed === isCompleted));
-	}, [toDoList, isCompleted]);
-
+	const filteredToDoList = useMemo(() => {
+		return filterOn
+			? toDoList.filter(el => el.completed === isCompleted)
+			: toDoList;
+	}, [toDoList, isCompleted, filterOn]);
 
 	return (
 		<div className='container mx-auto p-4 items-center gap-4'>
@@ -106,7 +115,7 @@ export default function Home() {
 				<button className='btn btn-outline min-w-60'>Добавить</button>
 			</form>
 
-			{(filterOn ? filteredToDoList : toDoList).map((el, index) => {
+			{filteredToDoList.map((el, index) => {
 				return (
 					<div
 						key={el.id}
