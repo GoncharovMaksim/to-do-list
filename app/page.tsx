@@ -9,10 +9,12 @@ interface ToDoItem {
 
 export default function Home() {
 	const [toDoList, setToDoList] = useState<ToDoItem[]>([]);
-
+	const [filteredToDoList, setFilteredToDoList] = useState<ToDoItem[]>([]);
 	const [toDoListTitle, setToDoListTitle] = useState('');
 
 	const inputRef = useRef<HTMLInputElement>(null);
+	const [isCompleted, setIsCompleted] = useState<boolean>(false);
+	const [filterOn, setFilterOn] = useState<boolean>(false);
 
 	function addToDoItem() {
 		const item: ToDoItem = {
@@ -26,14 +28,6 @@ export default function Home() {
 		setToDoListTitle('');
 		inputRef.current?.focus();
 	}
-
-	useEffect(() => {
-		setToDoList(JSON.parse(localStorage.getItem('toDoList') || '[]'));
-	}, []);
-
-	useEffect(() => {
-		localStorage.setItem('toDoList', JSON.stringify(toDoList));
-	}, [toDoList]);
 
 	function deleteToDoItem(item: ToDoItem) {
 		const deletedItem = toDoList.filter(el => el.id !== item.id);
@@ -49,12 +43,51 @@ export default function Home() {
 		});
 		setToDoList(completedItem);
 	}
-	
+
+	useEffect(() => {
+		setToDoList(JSON.parse(localStorage.getItem('toDoList') || '[]'));
+	}, []);
+
+	useEffect(() => {
+		localStorage.setItem('toDoList', JSON.stringify(toDoList));
+	}, [toDoList]);
+
+	useEffect(() => {
+		setFilteredToDoList(toDoList.filter(el => el.completed === isCompleted));
+	}, [toDoList, isCompleted]);
+
 
 	return (
 		<div className='container mx-auto p-4 items-center gap-4'>
 			<h1 className='text-4xl text-center'>Список дел</h1>
-
+			<div className='text-4xl text-center'>
+				<ul className='menu menu-horizontal bg-base-200'>
+					<li
+						onClick={() => setFilterOn(false)}
+						className={filterOn ? '' : 'disabled opacity-50'}
+					>
+						<a>Все</a>
+					</li>
+					<li
+						onClick={() => {
+							setIsCompleted(true);
+							setFilterOn(true);
+						}}
+						className={!filterOn || !isCompleted ? '' : 'disabled opacity-50'}
+					>
+						<a>Сделано</a>
+					</li>
+					<li
+						onClick={() => {
+							setIsCompleted(false);
+							setFilterOn(true);
+						}}
+						className={!filterOn || isCompleted ? '' : 'disabled opacity-50'}
+					>
+						<a>Не сделано</a>
+					</li>
+				</ul>
+			</div>
 			<form
 				onSubmit={e => {
 					e.preventDefault();
@@ -73,7 +106,7 @@ export default function Home() {
 				<button className='btn btn-outline min-w-60'>Добавить</button>
 			</form>
 
-			{toDoList.map((el, index) => {
+			{(filterOn ? filteredToDoList : toDoList).map((el, index) => {
 				return (
 					<div
 						key={el.id}
