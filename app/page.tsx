@@ -32,7 +32,7 @@ export default function Home() {
 	}, []);
 
 	useEffect(() => {
-		localStorage?.setItem('toDoList', JSON.stringify(toDoList));
+		localStorage.setItem('toDoList', JSON.stringify(toDoList));
 	}, [toDoList]);
 
 	function deleteToDoItem(item: ToDoItem) {
@@ -49,6 +49,7 @@ export default function Home() {
 		});
 		setToDoList(completedItem);
 	}
+	
 
 	return (
 		<div className='container mx-auto p-4 items-center gap-4'>
