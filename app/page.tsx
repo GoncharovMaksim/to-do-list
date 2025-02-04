@@ -9,9 +9,7 @@ interface ToDoItem {
 
 export default function Home() {
 	const [toDoList, setToDoList] = useState<ToDoItem[]>([]);
-	//const [filteredToDoList, setFilteredToDoList] = useState<ToDoItem[]>([]);
 	const [toDoListTitle, setToDoListTitle] = useState('');
-
 	const inputRef = useRef<HTMLInputElement>(null);
 	const [isCompleted, setIsCompleted] = useState<boolean>(false);
 	const [filterOn, setFilterOn] = useState<boolean>(false);
@@ -29,11 +27,6 @@ export default function Home() {
 		inputRef.current?.focus();
 	}
 
-	const deleteToDoItem = useCallback((item: ToDoItem) => {
-		setToDoList(prev => prev.filter(el => el.id !== item.id));
-	}, []);
-
-
 	function completeToDoItem(item: ToDoItem) {
 		const completedItem = toDoList.map(el => {
 			if (el.id === item.id) {
@@ -43,6 +36,10 @@ export default function Home() {
 		});
 		setToDoList(completedItem);
 	}
+
+	const deleteToDoItem = useCallback((item: ToDoItem) => {
+		setToDoList(prev => prev.filter(el => el.id !== item.id));
+	}, []);
 
 	useEffect(() => {
 		try {
@@ -59,10 +56,12 @@ export default function Home() {
 	}, [toDoList]);
 
 	const filteredToDoList = useMemo(() => {
-		return filterOn
-			? toDoList.filter(el => el.completed === isCompleted)
-			: toDoList;
-	}, [toDoList, isCompleted, filterOn]);
+		return (
+			filterOn ? toDoList.filter(el => el.completed === isCompleted) : toDoList
+		).filter(el =>
+			el.title.toLowerCase().includes(toDoListTitle.toLowerCase())
+		);
+	}, [filterOn, toDoList, isCompleted, toDoListTitle]);
 
 	return (
 		<div className='container mx-auto p-4 items-center gap-4'>
