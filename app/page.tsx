@@ -33,7 +33,7 @@ export default function Home() {
 		setToDoList(prev => prev.filter(el => el.id !== item.id));
 	}, []);
 
-	
+
 	function completeToDoItem(item: ToDoItem) {
 		const completedItem = toDoList.map(el => {
 			if (el.id === item.id) {
@@ -66,8 +66,8 @@ export default function Home() {
 
 	return (
 		<div className='container mx-auto p-4 items-center gap-4'>
-			<h1 className='text-4xl text-center'>Список дел</h1>
-			<div className='text-4xl text-center'>
+			<h1 className='text-3xl text-center'>Список дел</h1>
+			<div className='text-3xl text-center'>
 				<ul className='menu menu-horizontal bg-base-200'>
 					<li
 						onClick={() => setFilterOn(false)}
@@ -108,7 +108,7 @@ export default function Home() {
 					type='text'
 					value={toDoListTitle}
 					onChange={el => setToDoListTitle(el.target.value)}
-					className='input w-full text-3xl flex-auto px-8'
+					className='input w-full text-xl flex-auto px-8'
 				/>
 				<button className='btn btn-outline min-w-60'>Добавить</button>
 			</form>
@@ -123,7 +123,7 @@ export default function Home() {
 					>
 						<label
 							htmlFor={`todo-${el.id}`}
-							className='text-3xl flex items-center gap-4 flex-grow'
+							className='text-xl flex items-center gap-4 flex-grow'
 						>
 							<input
 								type='checkbox'
