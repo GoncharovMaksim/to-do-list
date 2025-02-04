@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { nanoid } from 'nanoid';
 interface ToDoItem {
 	id: string;
@@ -29,11 +29,11 @@ export default function Home() {
 		inputRef.current?.focus();
 	}
 
-	function deleteToDoItem(item: ToDoItem) {
-		const deletedItem = toDoList.filter(el => el.id !== item.id);
-		setToDoList(deletedItem);
-	}
+	const deleteToDoItem = useCallback((item: ToDoItem) => {
+		setToDoList(prev => prev.filter(el => el.id !== item.id));
+	}, []);
 
+	
 	function completeToDoItem(item: ToDoItem) {
 		const completedItem = toDoList.map(el => {
 			if (el.id === item.id) {
