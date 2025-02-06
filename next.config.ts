@@ -2,12 +2,12 @@ import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
 	images: {
-		domains: ['lh3.googleusercontent.com'], // Разрешенные домены для изображений
+		domains: ['lh3.googleusercontent.com'], // Добавьте сюда хост, с которого хотите загружать изображения
 	},
 	async headers() {
 		return [
 			{
-				source: '/(.*)', // Общие заголовки для всех файлов
+				source: '/(.*)',
 				headers: [
 					{
 						key: 'X-Content-Type-Options',
@@ -24,20 +24,7 @@ const nextConfig: NextConfig = {
 				],
 			},
 			{
-				source: '/manifest.json', // Добавлен manifest.json
-				headers: [
-					{
-						key: 'Content-Type',
-						value: 'application/manifest+json; charset=utf-8',
-					},
-					{
-						key: 'Cache-Control',
-						value: 'no-cache, no-store, must-revalidate',
-					},
-				],
-			},
-			{
-				source: '/sw.js', // Добавлен Service Worker
+				source: '/sw.js',
 				headers: [
 					{
 						key: 'Content-Type',
@@ -50,10 +37,6 @@ const nextConfig: NextConfig = {
 					{
 						key: 'Content-Security-Policy',
 						value: "default-src 'self'; script-src 'self'",
-					},
-					{
-						key: 'Service-Worker-Allowed',
-						value: '/',
 					},
 				],
 			},
