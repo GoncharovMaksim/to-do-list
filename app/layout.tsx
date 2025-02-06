@@ -13,14 +13,24 @@ const geistMono = Geist_Mono({
 	subsets: ['latin'],
 });
 
+// export const metadata: Metadata = {
+// 	title: 'Список дел',
+// 	description: 'Приложение для создания списка планируемых дел и задач',
+// 	manifest: '/manifest.webmanifest', // ✅ Важно! Подключаем манифест здесь!
+// 	themeColor: '#000000', // ✅ Цвет статус-бара на мобилках
+// 	icons: [{ rel: 'apple-touch-icon', url: '/icon-192x192.png' }],
+// };
 export const metadata: Metadata = {
 	title: 'Список дел',
 	description: 'Приложение для создания списка планируемых дел и задач',
-	manifest: '/manifest.webmanifest', // ✅ Важно! Подключаем манифест здесь!
-	themeColor: '#000000', // ✅ Цвет статус-бара на мобилках
-	icons: [{ rel: 'apple-touch-icon', url: '/icon-192x192.png' }],
+	manifest: '/manifest.json', // путь к манифесту
+	viewport: {
+		initialScale: 1,
+		maximumScale: 1,
+		width: 'device-width',
+	},
+	themeColor: '#000000', // перенести themeColor сюда
 };
-
 export default function RootLayout({
 	children,
 }: Readonly<{
