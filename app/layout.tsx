@@ -24,12 +24,6 @@ export const metadata: Metadata = {
 	title: 'Список дел',
 	description: 'Приложение для создания списка планируемых дел и задач',
 	manifest: '/manifest.json', // путь к манифесту
-	viewport: {
-		initialScale: 1,
-		maximumScale: 1,
-		width: 'device-width',
-	},
-	themeColor: '#000000', // перенести themeColor сюда
 };
 export default function RootLayout({
 	children,

@@ -7,7 +7,7 @@ const nextConfig: NextConfig = {
 	async headers() {
 		return [
 			{
-				source: '/manifest.webmanifest',
+				source: '/manifest.json', // Правильный путь к манифесту
 				headers: [
 					{
 						key: 'Content-Type',
