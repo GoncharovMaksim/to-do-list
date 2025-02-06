@@ -21,5 +21,19 @@ export default function manifest(): MetadataRoute.Manifest {
 				type: 'image/png',
 			},
 		],
+		screenshots: [
+			{
+				src: '/screenshot-desktop.png',
+				sizes: '1280x800',
+				type: 'image/png',
+				form_factor: 'wide', // Для десктопа
+			},
+			{
+				src: '/screenshot-mobile.png',
+				sizes: '750x1334',
+				type: 'image/png',
+				form_factor: 'narrow', // Для мобильных устройств (не wide)
+			},
+		],
 	};
 }
