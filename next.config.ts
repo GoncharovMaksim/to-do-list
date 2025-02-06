@@ -1,17 +1,47 @@
-// next.config.ts
-import withPWA from 'next-pwa';
-import { NextConfig } from 'next';
-import { PWAConfig } from 'next-pwa';
-interface ExtendedNextConfig extends NextConfig, PWAConfig {}
+import type { NextConfig } from 'next';
 
-const nextConfig: ExtendedNextConfig = {
-	reactStrictMode: true,
-	pwa: {
-		dest: 'public', // Папка для сервис-воркера
-		register: true, // Автоматическая регистрация сервис-воркера
-		skipWaiting: true, // Обновление сервис-воркера без ожидания
+const nextConfig: NextConfig = {
+	images: {
+		domains: ['lh3.googleusercontent.com'], // Добавьте сюда хост, с которого хотите загружать изображения
 	},
-	dest: ''
+	async headers() {
+		return [
+			{
+				source: '/(.*)',
+				headers: [
+					{
+						key: 'X-Content-Type-Options',
+						value: 'nosniff',
+					},
+					{
+						key: 'X-Frame-Options',
+						value: 'DENY',
+					},
+					{
+						key: 'Referrer-Policy',
+						value: 'strict-origin-when-cross-origin',
+					},
+				],
+			},
+			{
+				source: '/sw.js',
+				headers: [
+					{
+						key: 'Content-Type',
+						value: 'application/javascript; charset=utf-8',
+					},
+					{
+						key: 'Cache-Control',
+						value: 'no-cache, no-store, must-revalidate',
+					},
+					{
+						key: 'Content-Security-Policy',
+						value: "default-src 'self'; script-src 'self'",
+					},
+				],
+			},
+		];
+	},
 };
 
-export default withPWA(nextConfig);
+export default nextConfig;
