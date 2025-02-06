@@ -1,12 +1,12 @@
-import type { Metadata } from "next";
+'use client';
+import type { Metadata } from 'next';
 //import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import './globals.css';
 //import Providers from "./components/Providers";
 
-
 export const metadata: Metadata = {
-  title: "Список дел",
-  description: "Приложение для создания списка планируемых дел и задач",
+	title: 'Список дел',
+	description: 'Приложение для создания списка планируемых дел и задач',
 };
 
 import { useEffect } from 'react';
