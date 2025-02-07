@@ -1,6 +1,8 @@
 'use client';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { nanoid } from 'nanoid';
+import Link from 'next/link';
+import { useSession, signOut } from 'next-auth/react'; 
 interface ToDoItem {
 	id: string;
 	title: string;
@@ -22,6 +24,7 @@ export default function Home() {
 		useState<BeforeInstallPromptEvent | null>(null);
 	const [isInstalled, setIsInstalled] = useState(false);
 	const [showInstallPopup, setShowInstallPopup] = useState(false);
+	const session= useSession();
 
 	useEffect(() => {
 		const handleBeforeInstallPrompt = (e: Event) => {
@@ -117,7 +120,22 @@ export default function Home() {
 
 	return (
 		<div className='container mx-auto p-4 items-center gap-4'>
-			<h1 className='text-3xl text-center'>Список дел</h1>
+			<div className='flex items-center justify-center p-2 sm:p-1 md:p-1 text-base sm:text-sm md:text-xs ml-4'>
+				<h1 className='text-2xl text-center'>Список дел</h1>
+				{!session?.data?(<Link
+					href={'/api/auth/signin'}
+					className='flex items-center justify-center p-2 sm:p-1 md:p-1 text-base sm:text-sm md:text-xs ml-4'
+				>
+					<span className='material-icons sm:text-lg md:text-sm'>login</span>
+				</Link>):
+				(<Link
+					href={'#'}
+					onClick={()=>{signOut()}}
+					className='flex items-center justify-center p-2 sm:p-1 md:p-1 text-base sm:text-sm md:text-xs ml-4'
+				>
+					<span className='material-icons sm:text-lg md:text-sm'>logout</span>
+				</Link>)}
+			</div>
 			{/* Всплывающее окно установки */}
 			{!isInstalled && deferredPrompt && showInstallPopup && (
 				<div className='fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 z-50'>
@@ -136,6 +154,7 @@ export default function Home() {
 					</div>
 				</div>
 			)}
+
 			<div className='text-3xl text-center'>
 				<ul className='menu menu-horizontal bg-base-200'>
 					<li
