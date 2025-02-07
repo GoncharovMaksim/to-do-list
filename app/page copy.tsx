@@ -106,6 +106,28 @@ export default function Home() {
 	function completeToDoItem(item: ToDoItem) {
 		const completedItem = toDoList.map(el => {
 			if (el.id === item.id) {
+				if (session?.data) {
+					async function fetchPut() {
+						try {
+							const response = await fetch('api/todos', {
+								method: 'PUT',
+								body: JSON.stringify({
+									userId: session?.data?.user.id,
+									toDoItem: { ...item, completed: !item.completed },
+								}),
+							});
+							if (!response.ok) {
+								throw new Error(`Ошибка HTTP: ${response.status}`);
+							}
+							return await response.json();
+						} catch (error) {
+							console.error('Ошибка запроса:', error);
+						}
+					}
+
+					fetchPut();
+				}
+
 				return { ...el, completed: !el.completed };
 			}
 			return el;

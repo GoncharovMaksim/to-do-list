@@ -135,13 +135,40 @@ export default function Home() {
 		setToDoList(completedItem);
 	}
 
+
+
 	const deleteToDoItem = useCallback((item: ToDoItem) => {
+		//setToDoList(prev => prev.filter(el => el.id !== item.id));
+		if (session?.data) {
+			async function fetchDelete() {
+				try {
+					const response = await fetch('api/todos', {
+						method: 'DELETE',
+						body: JSON.stringify({
+							userId: session?.data?.user.id,
+							toDoItem: item,
+						}),
+					});
+					if (!response.ok) {
+						throw new Error(`Ошибка HTTP: ${response.status}`);
+					}
+					return await response.json();
+				} catch (error) {
+					console.error('Ошибка запроса:', error);
+				}
+			}
+
+			fetchDelete();
+		}
 		setToDoList(prev => prev.filter(el => el.id !== item.id));
-	}, []);
+	}, [session?.data]);
+
+
+
 
 	useEffect(() => {
 		if (session?.data) {
-			fetch('api/todos')
+			fetch(`api/todos?userId=${session.data.user.id}`)
 				.then(response => response.json())
 				.then(data => {
 					console.log(data);

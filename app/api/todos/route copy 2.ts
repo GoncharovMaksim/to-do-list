@@ -75,3 +75,36 @@ export async function PUT(req: Request) {
 	}
 }
 
+
+export async function DELETE(req: Request) {
+	try {
+		await connectDB();
+		const { userId, toDoItem } = await req.json();
+
+		if (!userId || !toDoItem?._id) {
+			return NextResponse.json(
+				{ error: 'userId и toDoItem._id обязательны' },
+				{ status: 400 }
+			);
+		}
+
+		// Удаляем конкретную задачу по userId и _id задачи
+		const deletedToDo = await ToDos.findOneAndDelete({
+			userId,
+			'toDoItem._id': toDoItem._id,
+		});
+
+		if (!deletedToDo) {
+			return NextResponse.json({ error: 'Задача не найдена' }, { status: 404 });
+		}
+
+		return NextResponse.json({ message: 'Задача удалена' });
+	} catch {
+		return NextResponse.json(
+			{ error: 'Ошибка при удалении задачи' },
+			{ status: 500 }
+		);
+	}
+}
+
+
