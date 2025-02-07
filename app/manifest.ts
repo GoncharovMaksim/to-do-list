@@ -2,8 +2,8 @@ import type { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
 	return {
-		name: 'Заметки112',
-		short_name: 'Заметки112',
+		name: 'Заметки',
+		short_name: 'Заметки',
 		description: 'Приложение для создания списка планируемых дел и задач',
 		start_url: '/',
 		display: 'standalone',
