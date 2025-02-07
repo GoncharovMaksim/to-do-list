@@ -15,7 +15,8 @@ const ToDosSchema = new mongoose.Schema(
 		userId: { type: String, required: true },
 		toDoItem: { type: ToDoItemSchema, required: true },
 	},
-	{ timestamps: true }
+	{ timestamps: true, _id: true },
+	
 );
 
 // Экспортируем модель
