@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { nanoid } from 'nanoid';
 import Link from 'next/link';
-import { useSession, signOut } from 'next-auth/react'; 
+import { useSession, signOut } from 'next-auth/react';
 interface ToDoItem {
 	id: string;
 	title: string;
@@ -24,7 +24,7 @@ export default function Home() {
 		useState<BeforeInstallPromptEvent | null>(null);
 	const [isInstalled, setIsInstalled] = useState(false);
 	const [showInstallPopup, setShowInstallPopup] = useState(false);
-	const session= useSession();
+	const session = useSession();
 
 	useEffect(() => {
 		const handleBeforeInstallPrompt = (e: Event) => {
@@ -69,7 +69,7 @@ export default function Home() {
 		setShowInstallPopup(false);
 	};
 
-	function addToDoItem() {
+	async function addToDoItem() {
 		if (!toDoListTitle.trim()) return;
 		const item: ToDoItem = {
 			id: nanoid(),
@@ -80,6 +80,23 @@ export default function Home() {
 		setToDoList([...toDoList, item]);
 		setToDoListTitle('');
 		inputRef.current?.focus();
+		if (session?.data) {
+			try {
+				const response = await fetch('api/todos', {
+					method: 'POST',
+					body: JSON.stringify({
+						userId: session.data.user.id,
+						toDoItem: item,
+					}),
+				});
+				if (!response.ok) {
+					throw new Error(`Ошибка HTTP: ${response.status}`);
+				}
+				return await response.json();
+			} catch (error) {
+				console.error('Ошибка запроса:', error);
+			}
+		}
 	}
 
 	function completeToDoItem(item: ToDoItem) {
@@ -122,19 +139,24 @@ export default function Home() {
 		<div className='container mx-auto p-4 items-center gap-4'>
 			<div className='flex items-center justify-center p-2 sm:p-1 md:p-1 text-base sm:text-sm md:text-xs ml-4'>
 				<h1 className='text-2xl text-center'>Список дел</h1>
-				{!session?.data?(<Link
-					href={'/api/auth/signin'}
-					className='flex items-center justify-center p-2 sm:p-1 md:p-1 text-base sm:text-sm md:text-xs ml-4'
-				>
-					<span className='material-icons sm:text-lg md:text-sm'>login</span>
-				</Link>):
-				(<Link
-					href={'#'}
-					onClick={()=>{signOut()}}
-					className='flex items-center justify-center p-2 sm:p-1 md:p-1 text-base sm:text-sm md:text-xs ml-4'
-				>
-					<span className='material-icons sm:text-lg md:text-sm'>logout</span>
-				</Link>)}
+				{!session?.data ? (
+					<Link
+						href={'/api/auth/signin'}
+						className='flex items-center justify-center p-2 sm:p-1 md:p-1 text-base sm:text-sm md:text-xs ml-4'
+					>
+						<span className='material-icons sm:text-lg md:text-sm'>login</span>
+					</Link>
+				) : (
+					<Link
+						href={'#'}
+						onClick={() => {
+							signOut();
+						}}
+						className='flex items-center justify-center p-2 sm:p-1 md:p-1 text-base sm:text-sm md:text-xs ml-4'
+					>
+						<span className='material-icons sm:text-lg md:text-sm'>logout</span>
+					</Link>
+				)}
 			</div>
 			{/* Всплывающее окно установки */}
 			{!isInstalled && deferredPrompt && showInstallPopup && (
