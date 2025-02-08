@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { nanoid } from 'nanoid';
 import Link from 'next/link';
 import { useSession, signOut } from 'next-auth/react';
+
 interface ToDoItem {
 	id: string;
 	title: string;
@@ -30,7 +31,7 @@ export default function Home() {
 	const [showInstallPopup, setShowInstallPopup] = useState(false);
 	const [showDeletePopup, setShowDeletePopup] = useState(false);
 	const [itemToDelete, setItemToDelete] = useState<ToDoItem>();
-
+	const [correctedToDoListTitle, setCorrectedToDoListTitle] = useState('');
 	const session = useSession();
 
 	useEffect(() => {
@@ -144,6 +145,42 @@ export default function Home() {
 		});
 		setToDoList(completedItem);
 	}
+
+function correctedToDoItem(item: ToDoItem) {
+	const correctedToDoItem = toDoList.map(el => {
+		if (el.id === item.id) {
+			if (session?.data) {
+				async function fetchPut() {
+					try {
+						const response = await fetch('api/todos', {
+							method: 'PUT',
+							body: JSON.stringify({
+								userId: session?.data?.user.id,
+								toDoItem: { ...item, title: correctedToDoListTitle },
+							}),
+						});
+						if (!response.ok) {
+							throw new Error(`Ошибка HTTP: ${response.status}`);
+						}
+						return await response.json();
+					} catch (error) {
+						console.error('Ошибка запроса:', error);
+					}
+				}
+
+				fetchPut();
+			}
+
+			return { ...el, title: correctedToDoListTitle };
+		}
+		return el;
+	});
+	setToDoList(correctedToDoItem);
+}
+
+
+
+
 
 	const deleteToDoItem = useCallback(
 		(item: ToDoItem) => {
@@ -330,6 +367,7 @@ export default function Home() {
 							onClick={() => {
 								setItemToDelete(el);
 								setShowDeletePopup(true);
+								setCorrectedToDoListTitle(el.title);
 								//handleDeletellClick(el);
 							}}
 							className='flex items-center justify-center p-2 sm:p-1 md:p-1 text-base sm:text-sm md:text-xs ml-4'
@@ -345,6 +383,15 @@ export default function Home() {
 									<h2 className='text-xl font-bold mb-4'>
 										Хотите удалить запись?
 									</h2>
+									{/* <h3>{el.title}</h3> */}
+									<input
+										type='text'
+										value={correctedToDoListTitle}
+										onChange={input => {
+											setCorrectedToDoListTitle(input.target.value);
+										}}
+										className='input w-full text-xl flex-auto px-8'
+									/>
 									<div className='flex justify-center gap-4'>
 										<button
 											className='btn btn-outline'
@@ -356,15 +403,19 @@ export default function Home() {
 										</button>
 										<button
 											className='btn btn-outline'
-											onClick={handleClosePopup}
+											onClick={() => {
+													if (itemToDelete) correctedToDoItem(itemToDelete);
+												
+												handleClosePopup();
+											}}
 										>
-											Отмена
+											Изменить
 										</button>
 										<button
 											className='btn btn-outline'
 											onClick={handleClosePopup}
 										>
-											Изменить
+											Отмена
 										</button>
 									</div>
 								</div>
