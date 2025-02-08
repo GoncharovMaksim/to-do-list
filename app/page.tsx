@@ -138,7 +138,7 @@ export default function Home() {
 
 
 	const deleteToDoItem = useCallback((item: ToDoItem) => {
-		//setToDoList(prev => prev.filter(el => el.id !== item.id));
+		
 		if (session?.data) {
 			async function fetchDelete() {
 				try {

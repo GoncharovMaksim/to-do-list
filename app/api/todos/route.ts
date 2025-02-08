@@ -52,7 +52,7 @@ export async function PUT(req: Request) {
 		await connectDB();
 		const { userId, toDoItem } = await req.json();
 
-		if (!userId || !toDoItem?._id) {
+		if (!userId || !toDoItem?.id) {
 			return NextResponse.json(
 				{ error: 'userId и toDoItem._id обязательны' },
 				{ status: 400 }
@@ -60,7 +60,7 @@ export async function PUT(req: Request) {
 		}
 
 		const updatedToDo = await ToDos.findOneAndUpdate(
-			{ userId, 'toDoItem._id': toDoItem._id },
+			{ userId, 'toDoItem.id': toDoItem.id },
 			{
 				$set: {
 					'toDoItem.title': toDoItem.title,
@@ -89,9 +89,9 @@ export async function DELETE(req: Request) {
 		await connectDB();
 		const { userId, toDoItem } = await req.json();
 
-		if (!userId || !toDoItem?._id) {
+		if (!userId || !toDoItem?.id) {
 			return NextResponse.json(
-				{ error: 'userId и toDoItem._id обязательны' },
+				{ error: 'userId и toDoItem.id обязательны' },
 				{ status: 400 }
 			);
 		}
@@ -99,7 +99,7 @@ export async function DELETE(req: Request) {
 		// Удаляем конкретную задачу по userId и _id задачи
 		const deletedToDo = await ToDos.findOneAndDelete({
 			userId,
-			'toDoItem._id': toDoItem._id,
+			'toDoItem.id': toDoItem.id,
 		});
 
 		if (!deletedToDo) {
