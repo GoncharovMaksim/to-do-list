@@ -28,6 +28,9 @@ export default function Home() {
 		useState<BeforeInstallPromptEvent | null>(null);
 	const [isInstalled, setIsInstalled] = useState(false);
 	const [showInstallPopup, setShowInstallPopup] = useState(false);
+	const [showDeletePopup, setShowDeletePopup] = useState(false);
+	const [itemToDelete, setItemToDelete] = useState<ToDoItem>();
+
 	const session = useSession();
 
 	useEffect(() => {
@@ -69,8 +72,15 @@ export default function Home() {
 		}
 	};
 
+	// const handleDeletellClick = async el => {
+	// 	//setShowDeletePopup(true);
+	// 	deleteToDoItem(el);
+	// 	setShowDeletePopup(false);
+	// };
+
 	const handleClosePopup = () => {
 		setShowInstallPopup(false);
+		setShowDeletePopup(false);
 	};
 
 	async function addToDoItem() {
@@ -135,36 +145,35 @@ export default function Home() {
 		setToDoList(completedItem);
 	}
 
-
-
-	const deleteToDoItem = useCallback((item: ToDoItem) => {
-		
-		if (session?.data) {
-			async function fetchDelete() {
-				try {
-					const response = await fetch('api/todos', {
-						method: 'DELETE',
-						body: JSON.stringify({
-							userId: session?.data?.user.id,
-							toDoItem: item,
-						}),
-					});
-					if (!response.ok) {
-						throw new Error(`Ошибка HTTP: ${response.status}`);
+	const deleteToDoItem = useCallback(
+		(item: ToDoItem) => {
+			console.log('item', item);
+			if (session?.data) {
+				async function fetchDelete() {
+					try {
+						const response = await fetch('api/todos', {
+							method: 'DELETE',
+							body: JSON.stringify({
+								userId: session?.data?.user.id,
+								toDoItem: item,
+							}),
+						});
+						if (!response.ok) {
+							throw new Error(`Ошибка HTTP: ${response.status}`);
+						}
+						return await response.json();
+					} catch (error) {
+						console.error('Ошибка запроса:', error);
 					}
-					return await response.json();
-				} catch (error) {
-					console.error('Ошибка запроса:', error);
 				}
+
+				fetchDelete();
 			}
-
-			fetchDelete();
-		}
-		setToDoList(prev => prev.filter(el => el.id !== item.id));
-	}, [session?.data]);
-
-
-
+			setToDoList(prev => prev.filter(el => el.id !== item.id));
+			setShowDeletePopup(false);
+		},
+		[session?.data]
+	);
 
 	useEffect(() => {
 		if (session?.data) {
@@ -317,13 +326,44 @@ export default function Home() {
 						</label>
 
 						<button
-							onClick={() => deleteToDoItem(el)}
+							// onClick={() => deleteToDoItem(el)}
+							onClick={() => {
+								setItemToDelete(el);
+								setShowDeletePopup(true);
+								//handleDeletellClick(el);
+							}}
 							className='flex items-center justify-center p-2 sm:p-1 md:p-1 text-base sm:text-sm md:text-xs ml-4'
 						>
 							<span className='material-icons sm:text-lg md:text-sm'>
 								delete
 							</span>
 						</button>
+						{/* Всплывающее окно удаления */}
+						{showDeletePopup && (
+							<div className='fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 z-50'>
+								<div className='bg-white p-6 rounded-lg shadow-lg text-center'>
+									<h2 className='text-xl font-bold mb-4'>
+										Хотите удалить запись?
+									</h2>
+									<div className='flex justify-center gap-4'>
+										<button
+											className='btn btn-outline'
+											onClick={() => {
+												if (itemToDelete) deleteToDoItem(itemToDelete);
+											}}
+										>
+											Удалить
+										</button>
+										<button
+											className='btn btn-outline'
+											onClick={handleClosePopup}
+										>
+											Отмена
+										</button>
+									</div>
+								</div>
+							</div>
+						)}
 					</div>
 				);
 			})}

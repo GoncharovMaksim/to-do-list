@@ -360,6 +360,12 @@ export default function Home() {
 										>
 											Отмена
 										</button>
+										<button
+											className='btn btn-outline'
+											onClick={handleClosePopup}
+										>
+											Изменить
+										</button>
 									</div>
 								</div>
 							</div>
