@@ -146,41 +146,37 @@ export default function Home() {
 		setToDoList(completedItem);
 	}
 
-function correctedToDoItem(item: ToDoItem) {
-	const correctedToDoItem = toDoList.map(el => {
-		if (el.id === item.id) {
-			if (session?.data) {
-				async function fetchPut() {
-					try {
-						const response = await fetch('api/todos', {
-							method: 'PUT',
-							body: JSON.stringify({
-								userId: session?.data?.user.id,
-								toDoItem: { ...item, title: correctedToDoListTitle },
-							}),
-						});
-						if (!response.ok) {
-							throw new Error(`Ошибка HTTP: ${response.status}`);
+	function correctedToDoItem(item: ToDoItem) {
+		const correctedToDoItem = toDoList.map(el => {
+			if (el.id === item.id) {
+				if (session?.data) {
+					async function fetchPut() {
+						try {
+							const response = await fetch('api/todos', {
+								method: 'PUT',
+								body: JSON.stringify({
+									userId: session?.data?.user.id,
+									toDoItem: { ...item, title: correctedToDoListTitle },
+								}),
+							});
+							if (!response.ok) {
+								throw new Error(`Ошибка HTTP: ${response.status}`);
+							}
+							return await response.json();
+						} catch (error) {
+							console.error('Ошибка запроса:', error);
 						}
-						return await response.json();
-					} catch (error) {
-						console.error('Ошибка запроса:', error);
 					}
+
+					fetchPut();
 				}
 
-				fetchPut();
+				return { ...el, title: correctedToDoListTitle };
 			}
-
-			return { ...el, title: correctedToDoListTitle };
-		}
-		return el;
-	});
-	setToDoList(correctedToDoItem);
-}
-
-
-
-
+			return el;
+		});
+		setToDoList(correctedToDoItem);
+	}
 
 	const deleteToDoItem = useCallback(
 		(item: ToDoItem) => {
@@ -249,6 +245,28 @@ function correctedToDoItem(item: ToDoItem) {
 			el.title.toLowerCase().includes(toDoListTitle.toLowerCase())
 		);
 	}, [filterOn, toDoList, isCompleted, toDoListTitle]);
+
+const textareaRef = useRef<HTMLTextAreaElement>(null);
+useEffect(() => {
+	// Устанавливаем правильную высоту при инициализации компонента
+	if (textareaRef.current) {
+		textareaRef.current.style.height = 'auto';
+		textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+	}
+}, [correctedToDoListTitle]);
+
+const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+	setCorrectedToDoListTitle(e.target.value);
+};
+
+const handleInput = (e: React.FormEvent<HTMLTextAreaElement>) => {
+	const target = e.target as HTMLTextAreaElement;
+	target.style.height = 'auto'; // Сбрасываем высоту
+	target.style.height = `${target.scrollHeight}px`; // Устанавливаем по контенту
+};
+
+
+
 
 	return (
 		<div className='container mx-auto p-4 items-center gap-4'>
@@ -383,15 +401,15 @@ function correctedToDoItem(item: ToDoItem) {
 									<h2 className='text-xl font-bold mb-4'>
 										Хотите удалить запись?
 									</h2>
-									{/* <h3>{el.title}</h3> */}
-									<input
-										type='text'
+									<textarea
+										ref={textareaRef}
 										value={correctedToDoListTitle}
-										onChange={input => {
-											setCorrectedToDoListTitle(input.target.value);
-										}}
-										className='input w-full text-xl flex-auto px-8'
+										onChange={handleInputChange}
+										onInput={handleInput}
+										className='w-full text-xl flex-auto px-8 py-3 my-4 resize-none overflow-hidden border rounded-md shadow-md'
+										rows={1}
 									/>
+
 									<div className='flex justify-center gap-4'>
 										<button
 											className='btn btn-outline'
@@ -404,8 +422,8 @@ function correctedToDoItem(item: ToDoItem) {
 										<button
 											className='btn btn-outline'
 											onClick={() => {
-													if (itemToDelete) correctedToDoItem(itemToDelete);
-												
+												if (itemToDelete) correctedToDoItem(itemToDelete);
+
 												handleClosePopup();
 											}}
 										>
