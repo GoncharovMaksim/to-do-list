@@ -22,7 +22,8 @@ interface BeforeInstallPromptEvent extends Event {
 export default function Home() {
 	const [toDoList, setToDoList] = useState<ToDoItem[]>([]);
 	const [toDoListTitle, setToDoListTitle] = useState('');
-	const inputRef = useRef<HTMLInputElement>(null);
+	const textareaRef = useRef<HTMLTextAreaElement>(null);
+	const correctedTextareaRef = useRef<HTMLTextAreaElement>(null);
 	const [isCompleted, setIsCompleted] = useState<boolean>(false);
 	const [filterOn, setFilterOn] = useState<boolean>(false);
 	const [deferredPrompt, setDeferredPrompt] =
@@ -94,7 +95,7 @@ export default function Home() {
 
 		setToDoList([...toDoList, item]);
 		setToDoListTitle('');
-		inputRef.current?.focus();
+		textareaRef.current?.focus();
 		if (session?.data) {
 			try {
 				const response = await fetch('api/todos', {
@@ -246,24 +247,35 @@ export default function Home() {
 		);
 	}, [filterOn, toDoList, isCompleted, toDoListTitle]);
 
-	const textareaRef = useRef<HTMLTextAreaElement>(null);
-	useEffect(() => {
-		// Устанавливаем правильную высоту при инициализации компонента
-		if (textareaRef.current) {
-			textareaRef.current.style.height = 'auto';
-			textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
-		}
-	}, [correctedToDoListTitle]);
 
-	const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-		setCorrectedToDoListTitle(e.target.value);
-	};
+useEffect(() => {
+	// Устанавливаем правильную высоту при инициализации компонента
+	if (textareaRef.current) {
+		textareaRef.current.style.height = 'auto';
+		textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+	}
+}, [correctedToDoListTitle]);
 
-	const handleInput = (e: React.FormEvent<HTMLTextAreaElement>) => {
+const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+	setCorrectedToDoListTitle(e.target.value);
+};
+
+  const handleInput = (e: React.FormEvent<HTMLTextAreaElement>) => {
 		const target = e.target as HTMLTextAreaElement;
-		target.style.height = 'auto'; // Сбрасываем высоту
-		target.style.height = `${target.scrollHeight}px`; // Устанавливаем по контенту
+
+		// Если поле пустое, сбрасываем высоту на минимальную (по умолчанию)
+		if (target.value === '') {
+			target.style.height = 'auto';
+			target.style.height = '32px'; // минимальная высота
+		} else {
+			// Если текст есть, устанавливаем высоту по содержимому
+			target.style.height = 'auto'; // Сбрасываем высоту
+			target.style.height = `${target.scrollHeight}px`; // Устанавливаем по контенту
+		}
 	};
+
+
+
 
 	return (
 		<div className='container mx-auto p-4 items-center gap-4'>
@@ -343,12 +355,16 @@ export default function Home() {
 				action=''
 				className=' p-8 flex flex-col  items-center gap-4 w-full '
 			>
-				<input
-					ref={inputRef}
-					type='text'
+				<textarea
+					ref={textareaRef}
 					value={toDoListTitle}
 					onChange={el => setToDoListTitle(el.target.value)}
-					className='input w-full text-xl flex-auto px-8'
+					// className='input w-full text-xl flex-auto px-8'
+					
+					
+					onInput={handleInput}
+					className='w-full text-xl flex-auto px-8 py-3 my-4 resize-none overflow-hidden border rounded-md shadow-md'
+					rows={1}
 				/>
 				<button className='btn btn-outline min-w-60'>Добавить</button>
 			</form>
@@ -399,7 +415,7 @@ export default function Home() {
 										Хотите удалить запись?
 									</h2>
 									<textarea
-										ref={textareaRef}
+										ref={correctedTextareaRef}
 										value={correctedToDoListTitle}
 										onChange={handleInputChange}
 										onInput={handleInput}

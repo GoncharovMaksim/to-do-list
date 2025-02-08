@@ -246,24 +246,27 @@ export default function Home() {
 		);
 	}, [filterOn, toDoList, isCompleted, toDoListTitle]);
 
-	const textareaRef = useRef<HTMLTextAreaElement>(null);
-	useEffect(() => {
-		// Устанавливаем правильную высоту при инициализации компонента
-		if (textareaRef.current) {
-			textareaRef.current.style.height = 'auto';
-			textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
-		}
-	}, [correctedToDoListTitle]);
+const textareaRef = useRef<HTMLTextAreaElement>(null);
+useEffect(() => {
+	// Устанавливаем правильную высоту при инициализации компонента
+	if (textareaRef.current) {
+		textareaRef.current.style.height = 'auto';
+		textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+	}
+}, [correctedToDoListTitle]);
 
-	const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-		setCorrectedToDoListTitle(e.target.value);
-	};
+const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+	setCorrectedToDoListTitle(e.target.value);
+};
 
-	const handleInput = (e: React.FormEvent<HTMLTextAreaElement>) => {
-		const target = e.target as HTMLTextAreaElement;
-		target.style.height = 'auto'; // Сбрасываем высоту
-		target.style.height = `${target.scrollHeight}px`; // Устанавливаем по контенту
-	};
+const handleInput = (e: React.FormEvent<HTMLTextAreaElement>) => {
+	const target = e.target as HTMLTextAreaElement;
+	target.style.height = 'auto'; // Сбрасываем высоту
+	target.style.height = `${target.scrollHeight}px`; // Устанавливаем по контенту
+};
+
+
+
 
 	return (
 		<div className='container mx-auto p-4 items-center gap-4'>
