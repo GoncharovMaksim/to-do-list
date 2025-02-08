@@ -1,88 +1,27 @@
 'use client';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {  useEffect, useMemo, useRef, useState } from 'react';
 import { nanoid } from 'nanoid';
-import Link from 'next/link';
-import { useSession, signOut } from 'next-auth/react';
 
-interface ToDoItem {
-	id: string;
-	title: string;
-	completed: boolean;
-}
-interface ToDos {
-	userId: string;
-	toDoItem: ToDoItem;
-}
+import { useSession } from 'next-auth/react';
+import { ToDoItem } from '@/types/todoitem';
+import { ToDos } from '@/types/todos';
+import HandleBeforeInstallPrompt from './components/HandleBeforeInstallPrompt';
+import LoginButton from './components/LoginButton';
+import FilterToDoList from './components/FilterToDoList';
+import ShowDeletePopup from './components/ShowDeletePopup';
 
-interface BeforeInstallPromptEvent extends Event {
-	prompt: () => Promise<void>;
-	userChoice: Promise<{ outcome: 'accepted' | 'dismissed'; platform: string }>;
-}
 
-export default function Home() {
+export default function App() {
 	const [toDoList, setToDoList] = useState<ToDoItem[]>([]);
 	const [toDoListTitle, setToDoListTitle] = useState('');
 	const inputRef = useRef<HTMLInputElement>(null);
 	const [isCompleted, setIsCompleted] = useState<boolean>(false);
 	const [filterOn, setFilterOn] = useState<boolean>(false);
-	const [deferredPrompt, setDeferredPrompt] =
-		useState<BeforeInstallPromptEvent | null>(null);
-	const [isInstalled, setIsInstalled] = useState(false);
-	const [showInstallPopup, setShowInstallPopup] = useState(false);
+
 	const [showDeletePopup, setShowDeletePopup] = useState(false);
 	const [itemToDelete, setItemToDelete] = useState<ToDoItem>();
 	const [correctedToDoListTitle, setCorrectedToDoListTitle] = useState('');
 	const session = useSession();
-
-	useEffect(() => {
-		const handleBeforeInstallPrompt = (e: Event) => {
-			const promptEvent = e as BeforeInstallPromptEvent;
-			e.preventDefault();
-			setDeferredPrompt(promptEvent);
-			setShowInstallPopup(true); // Показать всплывающее окно
-		};
-
-		const handleAppInstalled = () => {
-			setIsInstalled(true);
-			setShowInstallPopup(false); // Скрыть окно после установки
-		};
-
-		window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-		window.addEventListener('appinstalled', handleAppInstalled);
-
-		return () => {
-			window.removeEventListener(
-				'beforeinstallprompt',
-				handleBeforeInstallPrompt
-			);
-			window.removeEventListener('appinstalled', handleAppInstalled);
-		};
-	}, []);
-
-	const handleInstallClick = async () => {
-		if (deferredPrompt) {
-			await deferredPrompt.prompt();
-			const choice = await deferredPrompt.userChoice;
-			if (choice.outcome === 'accepted') {
-				console.log('PWA установлено пользователем');
-				setShowInstallPopup(false);
-			} else {
-				console.log('Пользователь отказался от установки');
-			}
-			setDeferredPrompt(null);
-		}
-	};
-
-	// const handleDeletellClick = async el => {
-	// 	//setShowDeletePopup(true);
-	// 	deleteToDoItem(el);
-	// 	setShowDeletePopup(false);
-	// };
-
-	const handleClosePopup = () => {
-		setShowInstallPopup(false);
-		setShowDeletePopup(false);
-	};
 
 	async function addToDoItem() {
 		if (!toDoListTitle.trim()) return;
@@ -146,68 +85,7 @@ export default function Home() {
 		setToDoList(completedItem);
 	}
 
-	function correctedToDoItem(item: ToDoItem) {
-		const correctedToDoItem = toDoList.map(el => {
-			if (el.id === item.id) {
-				if (session?.data) {
-					async function fetchPut() {
-						try {
-							const response = await fetch('api/todos', {
-								method: 'PUT',
-								body: JSON.stringify({
-									userId: session?.data?.user.id,
-									toDoItem: { ...item, title: correctedToDoListTitle },
-								}),
-							});
-							if (!response.ok) {
-								throw new Error(`Ошибка HTTP: ${response.status}`);
-							}
-							return await response.json();
-						} catch (error) {
-							console.error('Ошибка запроса:', error);
-						}
-					}
-
-					fetchPut();
-				}
-
-				return { ...el, title: correctedToDoListTitle };
-			}
-			return el;
-		});
-		setToDoList(correctedToDoItem);
-	}
-
-	const deleteToDoItem = useCallback(
-		(item: ToDoItem) => {
-			console.log('item', item);
-			if (session?.data) {
-				async function fetchDelete() {
-					try {
-						const response = await fetch('api/todos', {
-							method: 'DELETE',
-							body: JSON.stringify({
-								userId: session?.data?.user.id,
-								toDoItem: item,
-							}),
-						});
-						if (!response.ok) {
-							throw new Error(`Ошибка HTTP: ${response.status}`);
-						}
-						return await response.json();
-					} catch (error) {
-						console.error('Ошибка запроса:', error);
-					}
-				}
-
-				fetchDelete();
-			}
-			setToDoList(prev => prev.filter(el => el.id !== item.id));
-			setShowDeletePopup(false);
-		},
-		[session?.data]
-	);
-
+	
 	useEffect(() => {
 		if (session?.data) {
 			fetch(`api/todos?userId=${session.data.user.id}`)
@@ -246,95 +124,17 @@ export default function Home() {
 		);
 	}, [filterOn, toDoList, isCompleted, toDoListTitle]);
 
-	const textareaRef = useRef<HTMLTextAreaElement>(null);
-	useEffect(() => {
-		// Устанавливаем правильную высоту при инициализации компонента
-		if (textareaRef.current) {
-			textareaRef.current.style.height = 'auto';
-			textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
-		}
-	}, [correctedToDoListTitle]);
-
-	const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-		setCorrectedToDoListTitle(e.target.value);
-	};
-
-	const handleInput = (e: React.FormEvent<HTMLTextAreaElement>) => {
-		const target = e.target as HTMLTextAreaElement;
-		target.style.height = 'auto'; // Сбрасываем высоту
-		target.style.height = `${target.scrollHeight}px`; // Устанавливаем по контенту
-	};
+	
 
 	return (
 		<div className='container mx-auto p-4 items-center gap-4'>
+			<HandleBeforeInstallPrompt />
 			<div className='flex items-center justify-center p-2 sm:p-1 md:p-1 text-base sm:text-sm md:text-xs ml-4'>
 				<h1 className='text-2xl text-center'>Список дел</h1>
-				{!session?.data ? (
-					<Link
-						href={'/api/auth/signin'}
-						className='flex items-center justify-center p-2 sm:p-1 md:p-1 text-base sm:text-sm md:text-xs ml-4'
-					>
-						<span className='material-icons sm:text-lg md:text-sm'>login</span>
-					</Link>
-				) : (
-					<Link
-						href={'#'}
-						onClick={() => {
-							signOut();
-						}}
-						className='flex items-center justify-center p-2 sm:p-1 md:p-1 text-base sm:text-sm md:text-xs ml-4'
-					>
-						<span className='material-icons sm:text-lg md:text-sm'>logout</span>
-					</Link>
-				)}
+				<LoginButton />
 			</div>
-			{/* Всплывающее окно установки */}
-			{!isInstalled && deferredPrompt && showInstallPopup && (
-				<div className='fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 z-50'>
-					<div className='bg-white p-6 rounded-lg shadow-lg text-center'>
-						<h2 className='text-xl font-bold mb-4'>
-							Хотите установить приложение?
-						</h2>
-						<div className='flex justify-center gap-4'>
-							<button className='btn btn-outline' onClick={handleInstallClick}>
-								Установить
-							</button>
-							<button className='btn btn-outline' onClick={handleClosePopup}>
-								Позже
-							</button>
-						</div>
-					</div>
-				</div>
-			)}
-
-			<div className='text-3xl text-center'>
-				<ul className='menu menu-horizontal bg-base-200'>
-					<li
-						onClick={() => setFilterOn(false)}
-						className={filterOn ? '' : 'disabled opacity-50'}
-					>
-						<a>Все</a>
-					</li>
-					<li
-						onClick={() => {
-							setIsCompleted(true);
-							setFilterOn(true);
-						}}
-						className={!filterOn || !isCompleted ? '' : 'disabled opacity-50'}
-					>
-						<a>Сделано</a>
-					</li>
-					<li
-						onClick={() => {
-							setIsCompleted(false);
-							setFilterOn(true);
-						}}
-						className={!filterOn || isCompleted ? '' : 'disabled opacity-50'}
-					>
-						<a>Не сделано</a>
-					</li>
-				</ul>
-			</div>
+			<FilterToDoList isCompleted={isCompleted} setIsCompleted={setIsCompleted} filterOn={filterOn} setFilterOn={setFilterOn} />
+			
 			<form
 				onSubmit={e => {
 					e.preventDefault();
@@ -352,7 +152,6 @@ export default function Home() {
 				/>
 				<button className='btn btn-outline min-w-60'>Добавить</button>
 			</form>
-
 			{filteredToDoList.map((el, index) => {
 				return (
 					<div
@@ -378,12 +177,10 @@ export default function Home() {
 						</label>
 
 						<button
-							// onClick={() => deleteToDoItem(el)}
 							onClick={() => {
 								setItemToDelete(el);
 								setShowDeletePopup(true);
 								setCorrectedToDoListTitle(el.title);
-								//handleDeletellClick(el);
 							}}
 							className='flex items-center justify-center p-2 sm:p-1 md:p-1 text-base sm:text-sm md:text-xs ml-4'
 						>
@@ -392,50 +189,16 @@ export default function Home() {
 							</span>
 						</button>
 						{/* Всплывающее окно удаления */}
-						{showDeletePopup && (
-							<div className='fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 z-50'>
-								<div className='bg-white p-6 rounded-lg shadow-lg text-center'>
-									<h2 className='text-xl font-bold mb-4'>
-										Хотите удалить запись?
-									</h2>
-									<textarea
-										ref={textareaRef}
-										value={correctedToDoListTitle}
-										onChange={handleInputChange}
-										onInput={handleInput}
-										className='w-full text-xl flex-auto px-8 py-3 my-4 resize-none overflow-hidden border rounded-md shadow-md'
-										rows={1}
-									/>
-
-									<div className='flex justify-center gap-4'>
-										<button
-											className='btn btn-outline'
-											onClick={() => {
-												if (itemToDelete) deleteToDoItem(itemToDelete);
-											}}
-										>
-											Удалить
-										</button>
-										<button
-											className='btn btn-outline'
-											onClick={() => {
-												if (itemToDelete) correctedToDoItem(itemToDelete);
-
-												handleClosePopup();
-											}}
-										>
-											Изменить
-										</button>
-										<button
-											className='btn btn-outline'
-											onClick={handleClosePopup}
-										>
-											Отмена
-										</button>
-									</div>
-								</div>
-							</div>
-						)}
+						<ShowDeletePopup
+							showDeletePopup={showDeletePopup}
+							setShowDeletePopup={setShowDeletePopup}
+							itemToDelete={itemToDelete}
+							toDoList={toDoList}
+							setToDoList={setToDoList}
+							correctedToDoListTitle={correctedToDoListTitle}
+							setCorrectedToDoListTitle={setCorrectedToDoListTitle}
+						/>
+						
 					</div>
 				);
 			})}

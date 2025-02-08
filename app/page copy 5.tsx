@@ -1,12 +1,14 @@
 'use client';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { nanoid } from 'nanoid';
-import Link from 'next/link';
-import { useSession, signOut } from 'next-auth/react';
+//import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 import { ToDoItem } from '@/types/todoitem';
 import { ToDos } from '@/types/todos';
 //import useHandleBeforeInstallPrompt from './hooks/useHandleBeforeInstallPrompt';
 import HandleBeforeInstallPrompt from './components/HandleBeforeInstallPrompt';
+import LoginButton from './components/LoginButton';
+import FilterToDoList from './components/FilterToDoList';
 
 
 export default function App() {
@@ -15,64 +17,11 @@ export default function App() {
 	const inputRef = useRef<HTMLInputElement>(null);
 	const [isCompleted, setIsCompleted] = useState<boolean>(false);
 	const [filterOn, setFilterOn] = useState<boolean>(false);
-	//const [deferredPrompt, setDeferredPrompt] =
-	//	useState<BeforeInstallPromptEvent | null>(null);
-	//const [isInstalled, setIsInstalled] = useState(false);
-	//const [showInstallPopup, setShowInstallPopup] = useState(false);
+
 	const [showDeletePopup, setShowDeletePopup] = useState(false);
 	const [itemToDelete, setItemToDelete] = useState<ToDoItem>();
 	const [correctedToDoListTitle, setCorrectedToDoListTitle] = useState('');
 	const session = useSession();
-
-
-// const {
-// 	showInstallPopup,
-// 	isInstalled,
-// 	handleInstallClick,
-// 	handleClosePopup,
-// 	deferredPrompt,
-// } = useHandleBeforeInstallPrompt();
-
-
-
-	// useEffect(() => {
-	// 	const handleBeforeInstallPrompt = (e: Event) => {
-	// 		const promptEvent = e as BeforeInstallPromptEvent;
-	// 		e.preventDefault();
-	// 		setDeferredPrompt(promptEvent);
-	// 		setShowInstallPopup(true); // Показать всплывающее окно
-	// 	};
-
-	// 	const handleAppInstalled = () => {
-	// 		setIsInstalled(true);
-	// 		setShowInstallPopup(false); // Скрыть окно после установки
-	// 	};
-
-	// 	window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-	// 	window.addEventListener('appinstalled', handleAppInstalled);
-
-	// 	return () => {
-	// 		window.removeEventListener(
-	// 			'beforeinstallprompt',
-	// 			handleBeforeInstallPrompt
-	// 		);
-	// 		window.removeEventListener('appinstalled', handleAppInstalled);
-	// 	};
-	// }, []);
-
-	// const handleInstallClick = async () => {
-	// 	if (deferredPrompt) {
-	// 		await deferredPrompt.prompt();
-	// 		const choice = await deferredPrompt.userChoice;
-	// 		if (choice.outcome === 'accepted') {
-	// 			console.log('PWA установлено пользователем');
-	// 			setShowInstallPopup(false);
-	// 		} else {
-	// 			console.log('Пользователь отказался от установки');
-	// 		}
-	// 		setDeferredPrompt(null);
-	// 	}
-	// };
 
 
 
@@ -267,27 +216,10 @@ export default function App() {
 			<HandleBeforeInstallPrompt />
 			<div className='flex items-center justify-center p-2 sm:p-1 md:p-1 text-base sm:text-sm md:text-xs ml-4'>
 				<h1 className='text-2xl text-center'>Список дел</h1>
-				{!session?.data ? (
-					<Link
-						href={'/api/auth/signin'}
-						className='flex items-center justify-center p-2 sm:p-1 md:p-1 text-base sm:text-sm md:text-xs ml-4'
-					>
-						<span className='material-icons sm:text-lg md:text-sm'>login</span>
-					</Link>
-				) : (
-					<Link
-						href={'#'}
-						onClick={() => {
-							signOut();
-						}}
-						className='flex items-center justify-center p-2 sm:p-1 md:p-1 text-base sm:text-sm md:text-xs ml-4'
-					>
-						<span className='material-icons sm:text-lg md:text-sm'>logout</span>
-					</Link>
-				)}
+				<LoginButton />
 			</div>
-
-			<div className='text-3xl text-center'>
+			<FilterToDoList isCompleted={isCompleted} setIsCompleted={setIsCompleted} filterOn={filterOn} setFilterOn={setFilterOn} />
+			{/* <div className='text-3xl text-center'>
 				<ul className='menu menu-horizontal bg-base-200'>
 					<li
 						onClick={() => setFilterOn(false)}
@@ -314,7 +246,7 @@ export default function App() {
 						<a>Не сделано</a>
 					</li>
 				</ul>
-			</div>
+			</div> */}
 			<form
 				onSubmit={e => {
 					e.preventDefault();
@@ -357,12 +289,10 @@ export default function App() {
 						</label>
 
 						<button
-							// onClick={() => deleteToDoItem(el)}
 							onClick={() => {
 								setItemToDelete(el);
 								setShowDeletePopup(true);
 								setCorrectedToDoListTitle(el.title);
-								//handleDeletellClick(el);
 							}}
 							className='flex items-center justify-center p-2 sm:p-1 md:p-1 text-base sm:text-sm md:text-xs ml-4'
 						>

@@ -3,86 +3,82 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { nanoid } from 'nanoid';
 import Link from 'next/link';
 import { useSession, signOut } from 'next-auth/react';
+import { ToDoItem } from '@/types/todoitem';
+import { ToDos } from '@/types/todos';
+import useHandleBeforeInstallPrompt from './hooks/useHandleBeforeInstallPrompt';
 
-interface ToDoItem {
-	id: string;
-	title: string;
-	completed: boolean;
-}
-interface ToDos {
-	userId: string;
-	toDoItem: ToDoItem;
-}
 
-interface BeforeInstallPromptEvent extends Event {
-	prompt: () => Promise<void>;
-	userChoice: Promise<{ outcome: 'accepted' | 'dismissed'; platform: string }>;
-}
-
-export default function Home() {
+export default function App() {
 	const [toDoList, setToDoList] = useState<ToDoItem[]>([]);
 	const [toDoListTitle, setToDoListTitle] = useState('');
 	const inputRef = useRef<HTMLInputElement>(null);
 	const [isCompleted, setIsCompleted] = useState<boolean>(false);
 	const [filterOn, setFilterOn] = useState<boolean>(false);
-	const [deferredPrompt, setDeferredPrompt] =
-		useState<BeforeInstallPromptEvent | null>(null);
-	const [isInstalled, setIsInstalled] = useState(false);
-	const [showInstallPopup, setShowInstallPopup] = useState(false);
+	//const [deferredPrompt, setDeferredPrompt] =
+	//	useState<BeforeInstallPromptEvent | null>(null);
+	//const [isInstalled, setIsInstalled] = useState(false);
+	//const [showInstallPopup, setShowInstallPopup] = useState(false);
 	const [showDeletePopup, setShowDeletePopup] = useState(false);
 	const [itemToDelete, setItemToDelete] = useState<ToDoItem>();
 	const [correctedToDoListTitle, setCorrectedToDoListTitle] = useState('');
 	const session = useSession();
 
-	useEffect(() => {
-		const handleBeforeInstallPrompt = (e: Event) => {
-			const promptEvent = e as BeforeInstallPromptEvent;
-			e.preventDefault();
-			setDeferredPrompt(promptEvent);
-			setShowInstallPopup(true); // Показать всплывающее окно
-		};
 
-		const handleAppInstalled = () => {
-			setIsInstalled(true);
-			setShowInstallPopup(false); // Скрыть окно после установки
-		};
+const {
+	showInstallPopup,
+	isInstalled,
+	handleInstallClick,
+	handleClosePopup,
+	deferredPrompt,
+} = useHandleBeforeInstallPrompt();
 
-		window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-		window.addEventListener('appinstalled', handleAppInstalled);
 
-		return () => {
-			window.removeEventListener(
-				'beforeinstallprompt',
-				handleBeforeInstallPrompt
-			);
-			window.removeEventListener('appinstalled', handleAppInstalled);
-		};
-	}, []);
 
-	const handleInstallClick = async () => {
-		if (deferredPrompt) {
-			await deferredPrompt.prompt();
-			const choice = await deferredPrompt.userChoice;
-			if (choice.outcome === 'accepted') {
-				console.log('PWA установлено пользователем');
-				setShowInstallPopup(false);
-			} else {
-				console.log('Пользователь отказался от установки');
-			}
-			setDeferredPrompt(null);
-		}
-	};
+	// useEffect(() => {
+	// 	const handleBeforeInstallPrompt = (e: Event) => {
+	// 		const promptEvent = e as BeforeInstallPromptEvent;
+	// 		e.preventDefault();
+	// 		setDeferredPrompt(promptEvent);
+	// 		setShowInstallPopup(true); // Показать всплывающее окно
+	// 	};
 
-	// const handleDeletellClick = async el => {
-	// 	//setShowDeletePopup(true);
-	// 	deleteToDoItem(el);
-	// 	setShowDeletePopup(false);
+	// 	const handleAppInstalled = () => {
+	// 		setIsInstalled(true);
+	// 		setShowInstallPopup(false); // Скрыть окно после установки
+	// 	};
+
+	// 	window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+	// 	window.addEventListener('appinstalled', handleAppInstalled);
+
+	// 	return () => {
+	// 		window.removeEventListener(
+	// 			'beforeinstallprompt',
+	// 			handleBeforeInstallPrompt
+	// 		);
+	// 		window.removeEventListener('appinstalled', handleAppInstalled);
+	// 	};
+	// }, []);
+
+	// const handleInstallClick = async () => {
+	// 	if (deferredPrompt) {
+	// 		await deferredPrompt.prompt();
+	// 		const choice = await deferredPrompt.userChoice;
+	// 		if (choice.outcome === 'accepted') {
+	// 			console.log('PWA установлено пользователем');
+	// 			setShowInstallPopup(false);
+	// 		} else {
+	// 			console.log('Пользователь отказался от установки');
+	// 		}
+	// 		setDeferredPrompt(null);
+	// 	}
 	// };
 
-	const handleClosePopup = () => {
-		setShowInstallPopup(false);
-		setShowDeletePopup(false);
-	};
+
+
+	// const handleClosePopup = () => {
+	// 	setShowInstallPopup(false);
+	// 	setShowDeletePopup(false);
+	// };
 
 	async function addToDoItem() {
 		if (!toDoListTitle.trim()) return;
@@ -246,27 +242,24 @@ export default function Home() {
 		);
 	}, [filterOn, toDoList, isCompleted, toDoListTitle]);
 
-const textareaRef = useRef<HTMLTextAreaElement>(null);
-useEffect(() => {
-	// Устанавливаем правильную высоту при инициализации компонента
-	if (textareaRef.current) {
-		textareaRef.current.style.height = 'auto';
-		textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
-	}
-}, [correctedToDoListTitle]);
+	const textareaRef = useRef<HTMLTextAreaElement>(null);
+	useEffect(() => {
+		// Устанавливаем правильную высоту при инициализации компонента
+		if (textareaRef.current) {
+			textareaRef.current.style.height = 'auto';
+			textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+		}
+	}, [correctedToDoListTitle]);
 
-const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-	setCorrectedToDoListTitle(e.target.value);
-};
+	const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+		setCorrectedToDoListTitle(e.target.value);
+	};
 
-const handleInput = (e: React.FormEvent<HTMLTextAreaElement>) => {
-	const target = e.target as HTMLTextAreaElement;
-	target.style.height = 'auto'; // Сбрасываем высоту
-	target.style.height = `${target.scrollHeight}px`; // Устанавливаем по контенту
-};
-
-
-
+	const handleInput = (e: React.FormEvent<HTMLTextAreaElement>) => {
+		const target = e.target as HTMLTextAreaElement;
+		target.style.height = 'auto'; // Сбрасываем высоту
+		target.style.height = `${target.scrollHeight}px`; // Устанавливаем по контенту
+	};
 
 	return (
 		<div className='container mx-auto p-4 items-center gap-4'>
