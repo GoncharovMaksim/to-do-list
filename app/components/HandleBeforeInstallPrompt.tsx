@@ -1,7 +1,10 @@
-import { BeforeInstallPromptEvent } from "@/types/beforeInstallpromptevent";
+
 import { useEffect, useState } from "react";
 
-
+interface BeforeInstallPromptEvent extends Event {
+	prompt: () => Promise<void>;
+	userChoice: Promise<{ outcome: 'accepted' | 'dismissed'; platform: string }>;
+}
 
 export default function HandleBeforeInstallPrompt (){
 const [deferredPrompt, setDeferredPrompt] =
