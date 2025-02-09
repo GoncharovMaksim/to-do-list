@@ -5,7 +5,10 @@ interface ThemeSwapProps {
 
 //1
 export default function ThemeSwap({ darkTheme, setDarkTheme }: ThemeSwapProps) {
-	const themeSwitcher = () => setDarkTheme(!darkTheme);
+	const themeSwitcher = () => {
+		setDarkTheme(!darkTheme);
+		localStorage?.setItem('darkTheme', JSON.stringify(!darkTheme));
+	};
 
 	return (
 		<label className='swap swap-rotate px-6'>
@@ -36,4 +39,4 @@ export default function ThemeSwap({ darkTheme, setDarkTheme }: ThemeSwapProps) {
 			</svg>
 		</label>
 	);
-} 
+}
