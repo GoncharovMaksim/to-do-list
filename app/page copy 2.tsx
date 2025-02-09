@@ -9,6 +9,7 @@ import HandleBeforeInstallPrompt from './components/HandleBeforeInstallPrompt';
 import LoginButton from './components/LoginButton';
 import FilterToDoList from './components/FilterToDoList';
 import ShowDeletePopup from './components/ShowDeletePopup';
+import ThemeSwap from './components/ThemeSwap';
 
 
 export default function App() {
@@ -22,6 +23,8 @@ export default function App() {
 	const [itemToDelete, setItemToDelete] = useState<ToDoItem>();
 	const [correctedToDoListTitle, setCorrectedToDoListTitle] = useState('');
 	const session = useSession();
+
+	const [darkTheme, setDarkTheme]= useState(false);
 
 	async function addToDoItem() {
 		if (!toDoListTitle.trim()) return;
@@ -127,14 +130,24 @@ export default function App() {
 	
 
 	return (
-		<div className='container mx-auto p-4 items-center gap-4'>
+		<div
+			className='container mx-auto p-4 items-center gap-4 min-h-screen h-[100dvh] overflow-auto'
+			data-theme={darkTheme ? 'dark' : undefined}
+		>
 			<HandleBeforeInstallPrompt />
+
 			<div className='flex items-center justify-center p-2 sm:p-1 md:p-1 text-base sm:text-sm md:text-xs ml-4'>
+				<ThemeSwap darkTheme={darkTheme} setDarkTheme={setDarkTheme} />
 				<h1 className='text-2xl text-center'>Список дел</h1>
 				<LoginButton />
 			</div>
-			<FilterToDoList isCompleted={isCompleted} setIsCompleted={setIsCompleted} filterOn={filterOn} setFilterOn={setFilterOn} />
-			
+			<FilterToDoList
+				isCompleted={isCompleted}
+				setIsCompleted={setIsCompleted}
+				filterOn={filterOn}
+				setFilterOn={setFilterOn}
+			/>
+
 			<form
 				onSubmit={e => {
 					e.preventDefault();
@@ -148,7 +161,10 @@ export default function App() {
 					type='text'
 					value={toDoListTitle}
 					onChange={el => setToDoListTitle(el.target.value)}
-					className='input w-full text-xl flex-auto px-8'
+				
+					className={`input w-full text-xl flex-auto px-8 ${
+						darkTheme ? 'bg-gray-600' : ''
+					}`}
 				/>
 				<button className='btn btn-outline min-w-60'>Добавить</button>
 			</form>
@@ -157,7 +173,7 @@ export default function App() {
 					<div
 						key={el.id}
 						className={`p-4 flex items-center gap-4 w-full rounded-lg ${
-							index % 2 ? 'bg-gray-300' : ''
+							index % 2 && !darkTheme ? 'bg-gray-300' : ''
 						}`}
 					>
 						<label
@@ -197,8 +213,8 @@ export default function App() {
 							setToDoList={setToDoList}
 							correctedToDoListTitle={correctedToDoListTitle}
 							setCorrectedToDoListTitle={setCorrectedToDoListTitle}
+							darkTheme={darkTheme}
 						/>
-						
 					</div>
 				);
 			})}

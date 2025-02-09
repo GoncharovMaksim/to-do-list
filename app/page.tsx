@@ -173,7 +173,7 @@ export default function App() {
 					<div
 						key={el.id}
 						className={`p-4 flex items-center gap-4 w-full rounded-lg ${
-							index % 2&&!darkTheme ? 'bg-gray-300' : ''
+							index % 2 && !darkTheme ? 'bg-gray-300' : ''
 						}`}
 					>
 						<label
@@ -213,6 +213,7 @@ export default function App() {
 							setToDoList={setToDoList}
 							correctedToDoListTitle={correctedToDoListTitle}
 							setCorrectedToDoListTitle={setCorrectedToDoListTitle}
+							darkTheme={darkTheme}
 						/>
 					</div>
 				);
