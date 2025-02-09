@@ -24,7 +24,7 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang='ru' className={`bg-gray-100`}>
+		<html lang='ru' className={`bg-gray-100`} >
 			<head>
 				{/* Подключение иконок Google Material Icons */}
 				<link
@@ -32,10 +32,11 @@ export default function RootLayout({
 					rel='stylesheet'
 				/>
 			</head>
-			<body
+			<body 
 				className={`bg-gray-100 ${geistSans.variable} ${geistMono.variable} antialiased`}
+				
 			>
-				<Providers>{children}</Providers>
+				<Providers >{children}</Providers>
 			</body>
 		</html>
 	);

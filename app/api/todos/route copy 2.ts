@@ -22,6 +22,7 @@ export async function GET(req: Request) {
 	}
 }
 
+
 export async function POST(req: Request) {
 	try {
 		await connectDB();
@@ -74,13 +75,14 @@ export async function PUT(req: Request) {
 		}
 
 		return NextResponse.json(updatedToDo);
-	} catch {
+	} catch  {
 		return NextResponse.json(
 			{ error: 'Ошибка при обновлении задачи' },
 			{ status: 500 }
 		);
 	}
 }
+
 
 export async function DELETE(req: Request) {
 	try {
@@ -112,3 +114,5 @@ export async function DELETE(req: Request) {
 		);
 	}
 }
+
+

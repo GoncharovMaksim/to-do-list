@@ -9,7 +9,6 @@ import HandleBeforeInstallPrompt from './components/HandleBeforeInstallPrompt';
 import LoginButton from './components/LoginButton';
 import FilterToDoList from './components/FilterToDoList';
 import ShowDeletePopup from './components/ShowDeletePopup';
-import ThemeSwap from './components/ThemeSwap';
 
 
 export default function App() {
@@ -23,8 +22,6 @@ export default function App() {
 	const [itemToDelete, setItemToDelete] = useState<ToDoItem>();
 	const [correctedToDoListTitle, setCorrectedToDoListTitle] = useState('');
 	const session = useSession();
-
-	const [darkTheme, setDarkTheme]= useState(false);
 
 	async function addToDoItem() {
 		if (!toDoListTitle.trim()) return;
@@ -130,25 +127,14 @@ export default function App() {
 	
 
 	return (
-		<div
-			className='container mx-auto p-4 items-center gap-4 h-screen'
-			data-theme={darkTheme ? 'dark' : undefined}
-			
-		>
+		<div className='container mx-auto p-4 items-center gap-4'>
 			<HandleBeforeInstallPrompt />
-
 			<div className='flex items-center justify-center p-2 sm:p-1 md:p-1 text-base sm:text-sm md:text-xs ml-4'>
-				<ThemeSwap darkTheme={darkTheme} setDarkTheme={setDarkTheme} />
 				<h1 className='text-2xl text-center'>Список дел</h1>
 				<LoginButton />
 			</div>
-			<FilterToDoList
-				isCompleted={isCompleted}
-				setIsCompleted={setIsCompleted}
-				filterOn={filterOn}
-				setFilterOn={setFilterOn}
-			/>
-
+			<FilterToDoList isCompleted={isCompleted} setIsCompleted={setIsCompleted} filterOn={filterOn} setFilterOn={setFilterOn} />
+			
 			<form
 				onSubmit={e => {
 					e.preventDefault();
@@ -212,6 +198,7 @@ export default function App() {
 							correctedToDoListTitle={correctedToDoListTitle}
 							setCorrectedToDoListTitle={setCorrectedToDoListTitle}
 						/>
+						
 					</div>
 				);
 			})}
