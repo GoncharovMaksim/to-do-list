@@ -1,7 +1,6 @@
-import { ToDoItem } from "@/types/todoitem";
-import { useCallback, useEffect, useRef } from "react";
+import { ToDoItem } from '@/types/todoitem';
+import { useCallback, useEffect, useRef } from 'react';
 import { useSession } from 'next-auth/react';
-
 
 interface ShowDeletePopupProps {
 	showDeletePopup: boolean;
@@ -11,9 +10,8 @@ interface ShowDeletePopupProps {
 	setToDoList: React.Dispatch<React.SetStateAction<ToDoItem[]>>;
 	correctedToDoListTitle: string;
 	setCorrectedToDoListTitle: (title: string) => void;
-	darkTheme:boolean;
+	darkTheme: boolean;
 }
-
 
 export default function ShowDeletePopup({
 	showDeletePopup,
@@ -23,7 +21,7 @@ export default function ShowDeletePopup({
 	setToDoList,
 	correctedToDoListTitle,
 	setCorrectedToDoListTitle,
-	darkTheme
+	darkTheme,
 }: ShowDeletePopupProps) {
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
 	const session = useSession();
@@ -117,11 +115,10 @@ export default function ShowDeletePopup({
 			{showDeletePopup && (
 				<div className='fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 z-50'>
 					<div
-						className={`bg-white p-6 rounded-lg shadow-lg text-center ${
+						className={`p-6 rounded-lg shadow-lg text-center ${
 							darkTheme ? 'bg-gray-600' : 'bg-white'
 						}`}
 					>
-						{/* <div className='bg-white p-6 rounded-lg shadow-lg text-center'> */}
 						<h2 className='text-xl font-bold mb-4'>Хотите удалить запись?</h2>
 						<textarea
 							ref={textareaRef}
