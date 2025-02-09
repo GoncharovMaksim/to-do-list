@@ -131,9 +131,8 @@ export default function App() {
 
 	return (
 		<div
-			className='container mx-auto p-4 items-center gap-4 h-screen'
+			className='container mx-auto p-4 items-center gap-4 min-h-screen h-[100dvh] overflow-auto'
 			data-theme={darkTheme ? 'dark' : undefined}
-			
 		>
 			<HandleBeforeInstallPrompt />
 
