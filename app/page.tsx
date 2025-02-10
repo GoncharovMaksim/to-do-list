@@ -139,7 +139,8 @@ export default function App() {
 		>
 			<HandleBeforeInstallPrompt />
 
-			<div className='flex items-center justify-between p-2 sm:p-1 md:p-1 text-base sm:text-sm md:text-xs ml-4'>
+			<div className='flex items-center justify-between max-w-6xl mx-auto px-8 p-2 sm:p-1 md:p-1 text-base sm:text-sm md:text-xs'>
+				{/* <div className='flex items-center justify-between max-w-4xl mx-auto px-8 p-2 sm:p-1 md:p-1 text-base sm:text-sm md:text-xs'> */}
 				{/* <div className='flex items-center justify-center p-2 sm:p-1 md:p-1 text-base sm:text-sm md:text-xs ml-4'> */}
 				<ThemeSwap darkTheme={darkTheme} setDarkTheme={setDarkTheme} />
 				<h1 className='text-2xl text-center'>Список дел</h1>
