@@ -134,94 +134,98 @@ export default function App() {
 
 	return (
 		<div
-			className='container mx-auto p-4 items-center gap-4 min-h-screen h-[100dvh] overflow-auto'
+			className='w-full p-4 items-center gap-4 min-h-screen h-[100dvh] overflow-auto'
 			data-theme={darkTheme ? 'dark' : undefined}
 		>
-			<HandleBeforeInstallPrompt />
+			<div
+				className='container mx-auto p-4 items-center gap-4 '
+						>
+				<HandleBeforeInstallPrompt />
 
-			<div className='flex items-center justify-between max-w-6xl mx-auto px-8 p-2 sm:p-1 md:p-1 text-base sm:text-sm md:text-xs'>
-				{/* <div className='flex items-center justify-between max-w-4xl mx-auto px-8 p-2 sm:p-1 md:p-1 text-base sm:text-sm md:text-xs'> */}
-				{/* <div className='flex items-center justify-center p-2 sm:p-1 md:p-1 text-base sm:text-sm md:text-xs ml-4'> */}
-				<ThemeSwap darkTheme={darkTheme} setDarkTheme={setDarkTheme} />
-				<h1 className='text-2xl text-center'>Список дел</h1>
-				<LoginButton />
-			</div>
-			<FilterToDoList
-				isCompleted={isCompleted}
-				setIsCompleted={setIsCompleted}
-				filterOn={filterOn}
-				setFilterOn={setFilterOn}
-			/>
-
-			<form
-				onSubmit={e => {
-					e.preventDefault();
-					addToDoItem();
-				}}
-				action=''
-				className=' p-8 flex flex-col  items-center gap-4 w-full '
-			>
-				<input
-					ref={inputRef}
-					type='text'
-					value={toDoListTitle}
-					onChange={el => setToDoListTitle(el.target.value)}
-					className={`input w-full text-xl flex-auto px-8 ${
-						darkTheme ? 'bg-gray-600' : ''
-					}`}
+				<div className='flex items-center justify-between max-w-6xl mx-auto px-8 p-2 sm:p-1 md:p-1 text-base sm:text-sm md:text-xs'>
+					{/* <div className='flex items-center justify-between max-w-4xl mx-auto px-8 p-2 sm:p-1 md:p-1 text-base sm:text-sm md:text-xs'> */}
+					{/* <div className='flex items-center justify-center p-2 sm:p-1 md:p-1 text-base sm:text-sm md:text-xs ml-4'> */}
+					<ThemeSwap darkTheme={darkTheme} setDarkTheme={setDarkTheme} />
+					<h1 className='text-2xl text-center'>Список дел</h1>
+					<LoginButton />
+				</div>
+				<FilterToDoList
+					isCompleted={isCompleted}
+					setIsCompleted={setIsCompleted}
+					filterOn={filterOn}
+					setFilterOn={setFilterOn}
 				/>
-				<button className='btn btn-outline min-w-60'>Добавить</button>
-			</form>
-			{filteredToDoList.map((el, index) => {
-				return (
-					<div
-						key={el.id}
-						className={`p-4 flex items-center gap-4 w-full rounded-lg ${
-							index % 2 && !darkTheme ? 'bg-gray-300' : ''
-						}`}
-					>
-						<label
-							htmlFor={`todo-${el.id}`}
-							className='text-xl flex items-center gap-4 flex-grow'
-						>
-							<input
-								type='checkbox'
-								id={`todo-${el.id}`}
-								checked={el.completed}
-								className='checkbox'
-								onChange={() => completeToDoItem(el)}
-							/>
-							<span className={el.completed ? 'line-through' : ''}>
-								{el.title}
-							</span>
-						</label>
 
-						<button
-							onClick={() => {
-								setItemToDelete(el);
-								setShowDeletePopup(true);
-								setCorrectedToDoListTitle(el.title);
-							}}
-							className='flex items-center justify-center p-2 sm:p-1 md:p-1 text-base sm:text-sm md:text-xs ml-4'
+				<form
+					onSubmit={e => {
+						e.preventDefault();
+						addToDoItem();
+					}}
+					action=''
+					className=' p-8 flex flex-col  items-center gap-4 w-full '
+				>
+					<input
+						ref={inputRef}
+						type='text'
+						value={toDoListTitle}
+						onChange={el => setToDoListTitle(el.target.value)}
+						className={`input w-full text-xl flex-auto px-8 ${
+							darkTheme ? 'bg-gray-600' : ''
+						}`}
+					/>
+					<button className='btn btn-outline min-w-60'>Добавить</button>
+				</form>
+				{filteredToDoList.map((el, index) => {
+					return (
+						<div
+							key={el.id}
+							className={`p-4 flex items-center gap-4 w-full rounded-lg ${
+								index % 2 && !darkTheme ? 'bg-gray-300' : ''
+							}`}
 						>
-							<span className='material-icons sm:text-lg md:text-sm'>
-								delete
-							</span>
-						</button>
-						{/* Всплывающее окно удаления */}
-						<ShowDeletePopup
-							showDeletePopup={showDeletePopup}
-							setShowDeletePopup={setShowDeletePopup}
-							itemToDelete={itemToDelete}
-							toDoList={toDoList}
-							setToDoList={setToDoList}
-							correctedToDoListTitle={correctedToDoListTitle}
-							setCorrectedToDoListTitle={setCorrectedToDoListTitle}
-							darkTheme={darkTheme}
-						/>
-					</div>
-				);
-			})}
+							<label
+								htmlFor={`todo-${el.id}`}
+								className='text-xl flex items-center gap-4 flex-grow'
+							>
+								<input
+									type='checkbox'
+									id={`todo-${el.id}`}
+									checked={el.completed}
+									className='checkbox'
+									onChange={() => completeToDoItem(el)}
+								/>
+								<span className={el.completed ? 'line-through' : ''}>
+									{el.title}
+								</span>
+							</label>
+
+							<button
+								onClick={() => {
+									setItemToDelete(el);
+									setShowDeletePopup(true);
+									setCorrectedToDoListTitle(el.title);
+								}}
+								className='flex items-center justify-center p-2 sm:p-1 md:p-1 text-base sm:text-sm md:text-xs ml-4'
+							>
+								<span className='material-icons sm:text-lg md:text-sm'>
+									delete
+								</span>
+							</button>
+							{/* Всплывающее окно удаления */}
+							<ShowDeletePopup
+								showDeletePopup={showDeletePopup}
+								setShowDeletePopup={setShowDeletePopup}
+								itemToDelete={itemToDelete}
+								toDoList={toDoList}
+								setToDoList={setToDoList}
+								correctedToDoListTitle={correctedToDoListTitle}
+								setCorrectedToDoListTitle={setCorrectedToDoListTitle}
+								darkTheme={darkTheme}
+							/>
+						</div>
+					);
+				})}
+			</div>
 		</div>
 	);
 }
