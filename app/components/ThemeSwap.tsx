@@ -11,7 +11,8 @@ export default function ThemeSwap({ darkTheme, setDarkTheme }: ThemeSwapProps) {
 	};
 
 	return (
-		<label className='swap swap-rotate px-6'>
+		
+		<label className='swap swap-rotate'>
 			{/* this hidden checkbox controls the state */}
 			<input
 				type='checkbox'

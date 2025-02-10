@@ -1,5 +1,5 @@
 'use client';
-import {  useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { nanoid } from 'nanoid';
 
 import { useSession } from 'next-auth/react';
@@ -10,7 +10,6 @@ import LoginButton from './components/LoginButton';
 import FilterToDoList from './components/FilterToDoList';
 import ShowDeletePopup from './components/ShowDeletePopup';
 import ThemeSwap from './components/ThemeSwap';
-
 
 export default function App() {
 	const [toDoList, setToDoList] = useState<ToDoItem[]>([]);
@@ -24,7 +23,7 @@ export default function App() {
 	const [correctedToDoListTitle, setCorrectedToDoListTitle] = useState('');
 	const session = useSession();
 
-	const [darkTheme, setDarkTheme]= useState(false);
+	const [darkTheme, setDarkTheme] = useState(false);
 
 	async function addToDoItem() {
 		if (!toDoListTitle.trim()) return;
@@ -88,7 +87,6 @@ export default function App() {
 		setToDoList(completedItem);
 	}
 
-	
 	useEffect(() => {
 		if (session?.data) {
 			fetch(`api/todos?userId=${session.data.user.id}`)
@@ -127,7 +125,12 @@ export default function App() {
 		);
 	}, [filterOn, toDoList, isCompleted, toDoListTitle]);
 
-	
+	useEffect(() => {
+		const storedDarkTheme = localStorage.getItem('darkTheme');
+		if (storedDarkTheme) {
+			setDarkTheme(JSON.parse(storedDarkTheme));
+		}
+	}, []);
 
 	return (
 		<div
@@ -161,7 +164,6 @@ export default function App() {
 					type='text'
 					value={toDoListTitle}
 					onChange={el => setToDoListTitle(el.target.value)}
-				
 					className={`input w-full text-xl flex-auto px-8 ${
 						darkTheme ? 'bg-gray-600' : ''
 					}`}
