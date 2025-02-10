@@ -134,12 +134,13 @@ export default function App() {
 
 	return (
 		<div
-			className='w-full p-4 items-center gap-4 min-h-screen h-[100dvh] overflow-auto'
+			className='w-full min-h-screen h-[100dvh] overflow-auto'
 			data-theme={darkTheme ? 'dark' : undefined}
 		>
 			<div
 				className='container mx-auto p-4 items-center gap-4 '
-						>
+				
+			>
 				<HandleBeforeInstallPrompt />
 
 				<div className='flex items-center justify-between max-w-6xl mx-auto px-8 p-2 sm:p-1 md:p-1 text-base sm:text-sm md:text-xs'>
