@@ -177,6 +177,7 @@ export default function App() {
 						className={`input w-full text-xl flex-auto px-8 ${
 							darkTheme ? 'bg-gray-600' : ''
 						}`}
+						placeholder='Новая запись'
 					/>
 					<button className='btn btn-outline min-w-60'>Добавить</button>
 				</form>
