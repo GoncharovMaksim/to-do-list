@@ -1,17 +1,24 @@
 interface FilterToDoListProps {
-  isCompleted: boolean;
-  setIsCompleted: (value: boolean) => void;
-  filterOn: boolean;
-  setFilterOn: (value: boolean) => void;
+	isCompleted: boolean;
+	setIsCompleted: (value: boolean) => void;
+	filterOn: boolean;
+	setFilterOn: (value: boolean) => void;
 }
 
-export default function FilterToDoList({isCompleted, setIsCompleted, filterOn, setFilterOn }: FilterToDoListProps) {
-	
+export default function FilterToDoList({
+	isCompleted,
+	setIsCompleted,
+	filterOn,
+	setFilterOn,
+}: FilterToDoListProps) {
 	return (
 		<div className='text-3xl text-center'>
 			<ul className='menu menu-horizontal bg-base-200'>
 				<li
-					onClick={() => setFilterOn(false)}
+					onClick={() => {
+						setFilterOn(false);
+						localStorage.setItem('filterOn', JSON.stringify(false));
+					}}
 					className={filterOn ? '' : 'disabled opacity-50'}
 				>
 					<a>Все</a>
@@ -20,6 +27,8 @@ export default function FilterToDoList({isCompleted, setIsCompleted, filterOn, s
 					onClick={() => {
 						setIsCompleted(true);
 						setFilterOn(true);
+						localStorage.setItem('isCompleted', JSON.stringify(true));
+						localStorage.setItem('filterOn', JSON.stringify(true));
 					}}
 					className={!filterOn || !isCompleted ? '' : 'disabled opacity-50'}
 				>
@@ -29,6 +38,8 @@ export default function FilterToDoList({isCompleted, setIsCompleted, filterOn, s
 					onClick={() => {
 						setIsCompleted(false);
 						setFilterOn(true);
+						localStorage.setItem('isCompleted', JSON.stringify(false));
+						localStorage.setItem('filterOn', JSON.stringify(true));
 					}}
 					className={!filterOn || isCompleted ? '' : 'disabled opacity-50'}
 				>
