@@ -137,12 +137,10 @@ export default function App() {
 			className='w-full min-h-screen h-[100dvh] overflow-auto'
 			data-theme={darkTheme ? 'dark' : undefined}
 		>
-			{/* <div
-			className='w-full min-h-screen h-[100dvh] overflow-auto'
-			data-theme={darkTheme ? 'dark' : undefined}
-		> */}
-			<div className='container mx-auto p-4 items-center gap-4 '>
-				{/* <div className='container mx-auto p-4 items-center gap-4 '> */}
+			<div
+				className='container mx-auto p-4 items-center gap-4 '
+				
+			>
 				<HandleBeforeInstallPrompt />
 
 				<div className='flex items-center justify-between max-w-6xl mx-auto px-8 p-2 sm:p-1 md:p-1 text-base sm:text-sm md:text-xs'>
@@ -152,8 +150,6 @@ export default function App() {
 					<h1 className='text-2xl text-center'>Список дел</h1>
 					<LoginButton />
 				</div>
-
-
 				<FilterToDoList
 					isCompleted={isCompleted}
 					setIsCompleted={setIsCompleted}
@@ -180,13 +176,11 @@ export default function App() {
 					/>
 					<button className='btn btn-outline min-w-60'>Добавить</button>
 				</form>
-
-				
 				{filteredToDoList.map((el, index) => {
 					return (
 						<div
 							key={el.id}
-							className={`p-4 flex items-center  w-full rounded-lg ${
+							className={`p-4 flex items-center gap-4 w-full rounded-lg ${
 								index % 2 && !darkTheme ? 'bg-gray-300' : ''
 							}`}
 						>
@@ -213,7 +207,6 @@ export default function App() {
 									setCorrectedToDoListTitle(el.title);
 								}}
 								className='flex items-center justify-center p-2 sm:p-1 md:p-1 text-base sm:text-sm md:text-xs ml-4'
-								// className='flex items-center justify-center p-2 sm:p-1 md:p-1 text-base sm:text-sm md:text-xs ml-4'
 							>
 								<span className='material-icons sm:text-lg md:text-sm'>
 									delete
