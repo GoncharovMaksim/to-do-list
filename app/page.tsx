@@ -153,7 +153,6 @@ export default function App() {
 					<LoginButton />
 				</div>
 
-
 				<FilterToDoList
 					isCompleted={isCompleted}
 					setIsCompleted={setIsCompleted}
@@ -182,7 +181,6 @@ export default function App() {
 					<button className='btn btn-outline min-w-60'>Добавить</button>
 				</form>
 
-				
 				{filteredToDoList.map((el, index) => {
 					return (
 						<div
@@ -220,20 +218,21 @@ export default function App() {
 									delete
 								</span>
 							</button>
-							{/* Всплывающее окно удаления */}
-							<ShowDeletePopup
-								showDeletePopup={showDeletePopup}
-								setShowDeletePopup={setShowDeletePopup}
-								itemToDelete={itemToDelete}
-								toDoList={toDoList}
-								setToDoList={setToDoList}
-								correctedToDoListTitle={correctedToDoListTitle}
-								setCorrectedToDoListTitle={setCorrectedToDoListTitle}
-								darkTheme={darkTheme}
-							/>
+							
 						</div>
 					);
 				})}
+				{/* Всплывающее окно удаления */}
+				<ShowDeletePopup
+					showDeletePopup={showDeletePopup}
+					setShowDeletePopup={setShowDeletePopup}
+					itemToDelete={itemToDelete}
+					toDoList={toDoList}
+					setToDoList={setToDoList}
+					correctedToDoListTitle={correctedToDoListTitle}
+					setCorrectedToDoListTitle={setCorrectedToDoListTitle}
+					darkTheme={darkTheme}
+				/>
 			</div>
 		</div>
 	);
