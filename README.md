@@ -1,36 +1,82 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## To‑Do List (Next.js + TypeScript)
 
-## Getting Started
+Простое ToDo‑приложение (Mindbox test‑style) на Next.js 15, TypeScript и React Hooks. Поддерживает локальное хранение и синхронизацию с сервером при входе пользователя (NextAuth + MongoDB/Mongoose). Готово к деплою на Vercel и покрыто базовыми тестами (Vitest + Testing Library).
 
-First, run the development server:
+### Функциональность
+
+- Поле ввода для новых задач (Enter/кнопка «Добавить»)
+- Списки задач: Все, Сделано, Не сделано (переключатели)
+- Количество оставшихся задач (невыполненных)
+- Редактирование и удаление задачи (всплывающее окно)
+- Переключение выполненности чекбоксом, зачёркнутый стиль для выполненных
+- Темная тема (переключатель, сохранение в localStorage)
+- Локальное хранение задач (без сессии) и серверная синхронизация (при сессии)
+
+### Технологии
+
+- Next.js 15 (App Router), TypeScript, React 19
+- Auth: NextAuth (Google + Credentials)
+- База: MongoDB/Mongoose
+- UI: TailwindCSS + DaisyUI
+- Тесты: Vitest + @testing-library/react + jsdom
+
+### Быстрый старт
 
 ```bash
+npm i
+npm run start # соберёт и запустит прод-сервер
+# для разработки
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Приложение будет доступно на `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Тесты
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run test       # одноразовый прогон
+npm run test:watch # запуск в watch-режиме
+```
 
-## Learn More
+### Переменные окружения
 
-To learn more about Next.js, take a look at the following resources:
+Для серверных функций и NextAuth используйте переменные окружения:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+MONGO_DB=<строка подключения MongoDB>
+NEXTAUTH_URL=<https://your-deployment-url>
+NEXTAUTH_SECRET=<случайная_строка>
+GOOGLE_CLIENT_ID=<из консоли Google>
+GOOGLE_SECRET=<из консоли Google>
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Структура проекта (важное)
 
-## Deploy on Vercel
+- `app/page.tsx` — главная страница (список дел, ввод, фильтры, счётчик)
+- `app/components/FilterToDoList.tsx` — переключатели фильтров (Все/Сделано/Не сделано)
+- `app/components/ShowDeletePopup.tsx` — удаление/редактирование записи
+- `app/api/todos/route.ts` — API для CRUD задач (MongoDB)
+- `configs/auth.ts` — конфигурация NextAuth и коллбэки
+- `models/*.ts` — схемы Mongoose (`User`, `ToDos`)
+- `types/*.d.ts` — типы `ToDoItem`, `ToDos`, расширение `next-auth`
+- `tests/page.test.tsx` — базовые компонентные тесты
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### API
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `GET /api/todos?userId=...` — получить список задач пользователя
+- `POST /api/todos` — создать задачу `{ userId, toDoItem }`
+- `PUT /api/todos` — обновить задачу `{ userId, toDoItem }`
+- `DELETE /api/todos` — удалить задачу `{ userId, toDoItem }`
+
+Ответы — JSON; ошибки — с кодами 4xx/5xx.
+
+### Деплой
+
+- Рекомендуется Vercel. Настройте переменные окружения (см. выше) в проекте Vercel.
+- Убедитесь, что подключение к MongoDB доступно из облака.
+
+### Примечания
+
+- При отсутствии сессии задачи хранятся в `localStorage`.
+- При наличии сессии — выполняется синхронизация с MongoDB.
+- Есть базовые заголовки безопасности и настройка домена изображений в `next.config.ts`.
