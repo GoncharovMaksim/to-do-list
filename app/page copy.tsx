@@ -127,10 +127,24 @@ export default function App() {
 
 	useEffect(() => {
 		const storedDarkTheme = localStorage.getItem('darkTheme');
+		const storedFilterOn = localStorage.getItem('filterOn');
+		const storedIsCompleted = localStorage.getItem('isCompleted');
 		if (storedDarkTheme) {
 			setDarkTheme(JSON.parse(storedDarkTheme));
 		}
+		if (storedFilterOn) {
+			setFilterOn(JSON.parse(storedFilterOn));
+		}
+		if (storedIsCompleted) {
+			setIsCompleted(JSON.parse(storedIsCompleted));
+		}
 	}, []);
+	// useLayoutEffect(() => {
+	// 	const storedDarkTheme = localStorage.getItem('darkTheme');
+	// 	if (storedDarkTheme) {
+	// 		setDarkTheme(JSON.parse(storedDarkTheme));
+	// 	}
+	// }, []);
 
 	return (
 		<div
@@ -149,7 +163,7 @@ export default function App() {
 					{/* <div className='flex items-center justify-between max-w-4xl mx-auto px-8 p-2 sm:p-1 md:p-1 text-base sm:text-sm md:text-xs'> */}
 					{/* <div className='flex items-center justify-center p-2 sm:p-1 md:p-1 text-base sm:text-sm md:text-xs ml-4'> */}
 					<ThemeSwap darkTheme={darkTheme} setDarkTheme={setDarkTheme} />
-					<h1 className='text-2xl text-center'>Список дел</h1>
+					<h1 className='text-2xl text-center'>Список дел {filteredToDoList.length}</h1>
 					<LoginButton />
 				</div>
 
@@ -176,7 +190,7 @@ export default function App() {
 						className={`input w-full text-xl flex-auto px-8 ${
 							darkTheme ? 'bg-gray-600' : ''
 						}`}
-						placeholder='Новая запись'
+						placeholder='Фильтр/Новая запись'
 					/>
 					<button className='btn btn-outline min-w-60'>Добавить</button>
 				</form>
@@ -218,7 +232,6 @@ export default function App() {
 									delete
 								</span>
 							</button>
-							
 						</div>
 					);
 				})}
